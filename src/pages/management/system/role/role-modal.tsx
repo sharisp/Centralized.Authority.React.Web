@@ -8,11 +8,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
 import menuService from "@/api/services/menuService";
-import type { MenusTree, UserMenus } from "@/types/loginEntity";
+import type { MenusPermissionTree, UserMenus } from "@/types/loginEntity";
 import type { Role } from "@/types/systemEntity";
 import { Textarea } from "@/ui/textarea";
-import { convertFlatToTree } from "@/utils/tree";
-function findNodeById(tree: MenusTree[], id: string): MenusTree | null {
+import { convertToMenuPermissionTree } from "@/utils/tree";
+function findNodeById(tree: MenusPermissionTree[], id: string): MenusPermissionTree | null {
 	for (const node of tree) {
 		if (node.id === id) return node;
 		if (node.children) {
@@ -30,20 +30,47 @@ export type RoleModalProps = {
 	onOk: VoidFunction;
 	onCancel: VoidFunction;
 };
-const Menus: UserMenus[] = await menuService.getAllMenuList("");
-const MenuTree: MenusTree[] = convertFlatToTree(Menus);
+
 const { SHOW_PARENT } = TreeSelect;
-export function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModalProps) {
+export  function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModalProps) {
+	//const [Menus, setMenus] = useState<UserMenus[]>([]);
+	const [Menus1, setMenusWithPermission] = useState<UserMenus[]>([]);
+	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
+
+	useEffect(() => {
+		const fetchMenus = async () => {
+			try {
+		//		const fetchedMenus = await menuService.getAllMenuList("");
+				const fetchedMenusWithPermission = await menuService.getAllMenuListWithPermission("");
+				const tree = convertToMenuPermissionTree(fetchedMenusWithPermission);
+
+			//	setMenus(fetchedMenus);
+				setMenusWithPermission(fetchedMenusWithPermission);
+				setMenuTree(tree);
+			} catch (error) {
+				console.error("Failed to fetch menu data:", error);
+			}
+		};
+
+		fetchMenus();
+	}, []);
 	const form = useForm<Role>({
 		defaultValues: formValue,
 	});
 
+	onOk = () => {
+		console.log( Menus1, MenuTree);
+		console.log(form.getValues());
+	};
 	const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
 
 	useEffect(() => {
 		//	const flattenedPermissions = flattenTrees(formValue.menus);
+var keys=formValue.menus.map((item) => item.id);
+keys.push(...formValue.permissions.map((item) => item.id));
 
-		setCheckedKeys(formValue.menus.map((item) => item.id));
+//keys.push('1388473344772280320')
+		setCheckedKeys(keys);
 	}, [formValue]);
 
 	useEffect(() => {
@@ -102,14 +129,15 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModalP
 												showCheckedStrategy={SHOW_PARENT}
 												treeData={MenuTree}
 												value={checkedKeys}
+												treeCheckStrictly={true}
 												treeDefaultExpandAll
 												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
 												placeholder="Please select"
 												style={{ width: "100%" }}
 												onChange={(values: string[]) => {
 													setCheckedKeys(values);
-													const selectedMenus = values.map((id) => findNodeById(MenuTree, id)).filter(Boolean) as UserMenus[];
-													form.setValue("menus", selectedMenus);
+													const selectedMenus = values.map((id) => findNodeById(MenuTree, id)).filter(Boolean) as MenusPermissionTree[];
+												//	form.setValue("menus", selectedMenus);
 												}}
 											/>
 										</FormControl>

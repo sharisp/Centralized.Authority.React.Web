@@ -43,17 +43,7 @@ export default function AccountDropdown() {
 					</div>
 				</div>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem asChild>
-					<NavLink to="https://docs-admin.slashspaces.com/" target="_blank">
-						{t("sys.docs")}
-					</NavLink>
-				</DropdownMenuItem>
-				<DropdownMenuItem asChild>
-					<NavLink to="/management/user/profile">{t("sys.nav.user.profile")}</NavLink>
-				</DropdownMenuItem>
-				<DropdownMenuItem asChild>
-					<NavLink to="/management/user/account">{t("sys.nav.user.account")}</NavLink>
-				</DropdownMenuItem>
+
 				<DropdownMenuSeparator />
 				<DropdownMenuItem className="font-bold text-warning" onClick={logout}>
 					{t("sys.login.logout")}

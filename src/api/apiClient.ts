@@ -22,13 +22,13 @@ axiosInstance.interceptors.request.use(
 	},
 	(error) => Promise.reject(error),
 );
-
 axiosInstance.interceptors.response.use(
 	(res: AxiosResponse<ApiResponse<any>>) => {
 		console.log(res);
 		//	if (!res.data) throw new Error(t("sys.api.apiRequestFailed"));
 		const { success, data, statusCode, errorMsg } = res.data;
 		if (statusCode === 401 || statusCode === 403) {
+			console.log(success, data, statusCode, errorMsg);
 			userStore.getState().actions.clearUserInfoAndToken();
 		}
 		if (success) {

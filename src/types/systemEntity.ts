@@ -8,7 +8,7 @@ export interface Role {
 	menus: UserMenus[];
 }
 export interface Permission {
-	id: number;
+	id: string;
 	title?: string;
 	systemName?: string;
 	permissionKey: string;

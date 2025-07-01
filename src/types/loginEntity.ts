@@ -15,7 +15,7 @@ export interface UserLoginResponse extends LoginUser {
 export interface LoginUser {
 	userName: string;
 	nickName: string | null;
-	userId: number;
+	userId: string;
 	email: string;
 	roles?: UserRole[];
 	status?: BasicStatus;
@@ -24,7 +24,7 @@ export interface LoginUser {
 }
 
 export interface UserRole {
-	id: number;
+	id: string;
 	roleName: string;
 }
 export interface UserMenus extends MenusMetaInfo {
@@ -38,6 +38,7 @@ export interface UserMenus extends MenusMetaInfo {
 	type: MenuType;
 	isShow: boolean;
 	description?: string;
+	permissions?: UserPermissions[];
 	//externalLink?: string | null;
 	systemName: string;
 }
@@ -45,10 +46,11 @@ export enum MenuType {
 	Group = 0,
 	Catelogue = 1,
 	Menu = 2,
+	Permission = 3,
 }
 
 export interface UserPermissions {
-	id: number;
+	id: string;
 	title: string;
 	permissionKey: string;
 }
@@ -58,4 +60,13 @@ export type MenusTree = UserMenus & {
 export type MenusMetaInfo = Partial<Pick<NavItemDataProps, "path" | "icon" | "caption" | "info" | "disabled" | "auth" | "hidden">> & {
 	externalLink?: URL;
 	component?: string;
+};
+
+
+export type MenusPermissionTree = {
+	id: string;
+	title: string;
+	parentId: string;
+	menuType: MenuType;
+	children?: MenusPermissionTree[];
 };
