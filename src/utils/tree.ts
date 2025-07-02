@@ -62,27 +62,30 @@ export function convertToMenuPermissionTree(items: UserMenus[]): MenusPermission
 	const itemMap = new Map<string, MenusPermissionTree>();
 	const result: MenusPermissionTree[] = [];
 
-	// First pass: create a map of all items
 	for (const item of items) {
-		/*	id: string;
-			title: string;
-			parentId: string;
-			menuType:MenuType;*/
-		itemMap.set(item.id, { id: item.id, title: item.title, parentId: item.parentId, menuType: item.type, children: [] });
+		if (item.parentId === '0' && item.systemName !== "") {
+			//system group
+			itemMap.set("s_" + item.systemName, { id: "s_" + item.systemName, title: item.systemName, parentId: "s_none", menuType: MenuType.Group, children: [] });
+			//
+			itemMap.set("m_" + item.id, { id: "m_" + item.id, title: item.title, parentId: "s_" + item.systemName, menuType: item.type, children: [] });
+
+		} else {
+			itemMap.set("m_" + item.id, { id: "m_" + item.id, title: item.title, parentId: "m_" + item.parentId, menuType: item.type, children: [] });
+
+		}
 		if (item.type === MenuType.Menu && item.permissions != null) {
 			for (const element of item.permissions) {
-				itemMap.set(element.id, { id: element.id, title: element.title, parentId: item.id, menuType: MenuType.Permission, children: [] });
+				itemMap.set("p_" + element.id, { id: "p_" + element.id, title: element.title, parentId: "m_" + item.id, menuType: MenuType.Permission, children: [] });
 
 			}
 		}
 	}
-	console.log(items, itemMap)
 	// Second pass: build the tree
 	for (const item of itemMap.values()) {
 		const node = itemMap.get(item.id);
 		//console.log(node);
 		if (!node) continue;
-		if (item.parentId === '0' || item.parentId === '') {
+		if (item.parentId === 's_none') {
 			result.push(node);
 		} else {
 			const parent = itemMap.get(item.parentId);

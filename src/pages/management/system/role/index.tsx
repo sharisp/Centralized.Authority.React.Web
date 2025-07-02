@@ -3,11 +3,12 @@ import roleService from "@/api/services/roleService";
 import { Icon } from "@/components/icon";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
-import { useQuery } from "@tanstack/react-query";
 import Table, { type ColumnsType } from "antd/es/table";
-import { useState } from "react";
-import type { Role } from "#/systemEntity";
+import { useEffect, useState } from "react";
+import type { PagenationParam, Role } from "#/systemEntity";
 import { RoleModal, type RoleModalProps } from "./role-modal";
+import { Col, Form, Input, Row, Space } from "antd";
+import { toast } from "sonner";
 
 // TODO: fix
 // const ROLES: Role_Old[] = ROLE_LIST as Role_Old[];
@@ -19,14 +20,54 @@ const DEFAULE_ROLE_VALUE: Role = {
 	permissions: [],
 };
 export default function RolePage() {
-	const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
+	/*const [dataList, setDataList] = useState<Role[]>([])
+	const [isLoading, setIsLoading] = useState(false)
+	const [queryParams, setQueryParams] = useState({})
+	const [totalPage, setTotalPage] = useState(0)
+	const [pageIndex, setpageIndex] = useState(1)
+	const [pageSize, setPageSize] = useState(20)
+*/
+	const [isLoading, setIsLoading] = useState(false)
+
+	const [paginationData, setPaginationData] = useState({
+		dataList: [] as Role[],
+		totalCount: 0,
+	})
+	const [queryState, setQueryState] = useState<PagenationParam>({
+		queryParams: {},
+		pageIndex: 1,
+		pageSize: 20,
+	});
+
+
+	const getList = async () => {
+		setIsLoading(true)
+		try {
+			const data = await roleService.getpaginationlist(queryState)
+			setPaginationData({
+				totalCount: data.totalCount,
+				dataList: data.dataList
+
+			})
+		} catch {
+			toast.error("get list error")
+		}
+
+		//setTotalPage(data.totalCount)
+		setIsLoading(false)
+	}
+
+
+	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
 	const [roleModalPros, setRoleModalProps] = useState<RoleModalProps>({
 		formValue: { ...DEFAULE_ROLE_VALUE },
 		title: "New",
 		show: false,
 		onOk: () => {
+			getList()
 			setRoleModalProps((prev) => ({ ...prev, show: false }));
+
 		},
 		onCancel: () => {
 			setRoleModalProps((prev) => ({ ...prev, show: false }));
@@ -56,7 +97,12 @@ export default function RolePage() {
 			),
 		},
 	];
-
+	useEffect(() => {
+		console.log(queryState)
+		getList()
+	}
+		, [queryState])
+	const [searchForm] = Form.useForm();
 	const onCreate = () => {
 		setRoleModalProps((prev) => ({
 			...prev,
@@ -68,7 +114,6 @@ export default function RolePage() {
 			},
 		}));
 	};
-
 	const onEdit = async (formValue: Role) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		const detail = await roleService.getdetail(formValue.id);
@@ -83,19 +128,81 @@ export default function RolePage() {
 			},
 		}));
 	};
+	const onSearch = () => {
+
+		const formvalues = searchForm.getFieldsValue()
+
+		setQueryState(prev => ({
+			...prev,
+			pageIndex: 1,
+			queryParams: formvalues,
+		}))
+
+		//pageindex, pagesize更新usestate是异步的，直接查询不行，或者传参 或者用useeffect跟踪这几个参数
+		//getList()
+	}
+	const onPageChange = (pagination: { current?: number; pageSize?: number }) => {
+
+		const { current, pageSize } = pagination
+		setQueryState(prev => ({
+			...prev,
+			pageIndex: current ?? prev.pageIndex,
+			pageSize: pageSize ?? prev.pageSize,
+		}));
+		//getList()
+	}
+
+	const formStyle: React.CSSProperties = {
+		maxWidth: 'none',
+		padding: 24,
+	};
 
 	return (
 		<Card>
 			<CardHeader>
-				<div className="flex items-center justify-between">
-					<div>Role List</div>
-					<Button onClick={onCreate}>New</Button>
+				<div style={{ width: '100%' }}>Role List</div>
+				<div className="items-center justify-between">
+					<Form form={searchForm} name="advanced_search" style={formStyle} onFinish={onSearch}>
+						<Row gutter={24}>	<Col span={8} key={1}>
+							<Form.Item label="Role Name" name="roleName">
+								<Input placeholder="input Role Name" />
+							</Form.Item>
+						</Col>		<Col span={8} key={2}>
+								<Form.Item label="Description" name="description">
+									<Input placeholder="input description" />
+								</Form.Item>
+							</Col>
+							<Col span={8} key={3}>
+								<Space size="large">
+									<Button type="submit">
+										Search
+									</Button>
+									<Button type="button"
+										onClick={() => {
+											searchForm.resetFields();
+										}}
+									>
+										Clear
+									</Button>
+
+									<Button type="button" onClick={onCreate}>New</Button>
+								</Space>
+
+							</Col>
+						</Row>
+
+					</Form>
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Table<Role> rowKey="id" size="small" loading={isLoading} scroll={{ x: "max-content" }} pagination={false} columns={columns} dataSource={roles} />
+				<Table<Role> rowKey="id" size="small" loading={isLoading} scroll={{ x: 'max-content', y: 55 * 5 }}
+					pagination={{
+						total: paginationData.totalCount, position: ['bottomRight'], showSizeChanger: true, showQuickJumper: true,
+						showTotal: (total) => `Total ${total} items`
+					}} columns={columns} dataSource={paginationData.dataList} onChange={onPageChange} />
+
 			</CardContent>
 			<RoleModal {...roleModalPros} />
-		</Card>
+		</Card >
 	);
 }

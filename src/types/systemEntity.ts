@@ -13,3 +13,13 @@ export interface Permission {
 	systemName?: string;
 	permissionKey: string;
 }
+export interface PagenationParam {
+	pageIndex: number;
+	pageSize: number
+	queryParams: any
+}
+
+export interface PagenationData<T> {
+	totalCount: number;
+	dataList: T[]
+}

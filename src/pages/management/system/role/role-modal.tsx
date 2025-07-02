@@ -8,20 +8,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
 import menuService from "@/api/services/menuService";
-import type { MenusPermissionTree, UserMenus } from "@/types/loginEntity";
+import type { MenusPermissionTree } from "@/types/loginEntity";
 import type { Role } from "@/types/systemEntity";
 import { Textarea } from "@/ui/textarea";
 import { convertToMenuPermissionTree } from "@/utils/tree";
-function findNodeById(tree: MenusPermissionTree[], id: string): MenusPermissionTree | null {
-	for (const node of tree) {
-		if (node.id === id) return node;
-		if (node.children) {
-			const found = findNodeById(node.children, id);
-			if (found) return found;
-		}
-	}
-	return null;
-}
+import roleService, { RoleCreate } from "@/api/services/roleService";
+import { toast } from "sonner";
+
 
 export type RoleModalProps = {
 	formValue: Role;
@@ -32,23 +25,23 @@ export type RoleModalProps = {
 };
 
 const { SHOW_PARENT } = TreeSelect;
-export  function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModalProps) {
+export function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModalProps) {
 	//const [Menus, setMenus] = useState<UserMenus[]>([]);
-	const [Menus1, setMenusWithPermission] = useState<UserMenus[]>([]);
+	//const [Menus1, setMenusWithPermission] = useState<UserMenus[]>([]);
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
 
 	useEffect(() => {
 		const fetchMenus = async () => {
 			try {
-		//		const fetchedMenus = await menuService.getAllMenuList("");
+				//		const fetchedMenus = await menuService.getAllMenuList("");
 				const fetchedMenusWithPermission = await menuService.getAllMenuListWithPermission("");
 				const tree = convertToMenuPermissionTree(fetchedMenusWithPermission);
 
-			//	setMenus(fetchedMenus);
-				setMenusWithPermission(fetchedMenusWithPermission);
+				//	setMenus(fetchedMenus);
+				//	setMenusWithPermission(fetchedMenusWithPermission);
 				setMenuTree(tree);
 			} catch (error) {
-				console.error("Failed to fetch menu data:", error);
+				console.error("Failed to fetch menu data:");
 			}
 		};
 
@@ -58,18 +51,58 @@ export  function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModal
 		defaultValues: formValue,
 	});
 
-	onOk = () => {
-		console.log( Menus1, MenuTree);
+	const onSubmit = async () => {
+
 		console.log(form.getValues());
+		let menuIds: string[] = []
+		let permissionIds: string[] = []
+		for (const key of checkedKeys) {
+			console.log(key)
+			if (key.startsWith('m_')) {
+				menuIds.push(key.replace('m_', ''))
+			}
+			else if (key.startsWith('p_')) {
+				permissionIds.push(key.replace('p_', ''))
+			}
+		}
+		const role: RoleCreate = {
+			id: form.getValues().id, roleName: form.getValues().roleName, description: form.getValues().description,
+			menuIds: menuIds, permissionIds: permissionIds
+		}
+		try {
+			if (role.id === 0) {
+				//new
+				await roleService.create(role)
+
+			} else {
+				await roleService.update(role)
+				toast.success("update success")
+			}
+			onOk()
+		} catch {
+			toast.error("operation error")
+		}
+
 	};
 	const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
 
+	//use unknown
+	const handleOnchange = (values: unknown[]) => {
+		const newCheckedKeys = values.map(item => {
+
+			if (typeof item === 'object' && item !== null && 'value' in item) {
+				return String(item.value);
+			}
+			return String(item);
+		});
+		setCheckedKeys(newCheckedKeys);
+	}
 	useEffect(() => {
 		//	const flattenedPermissions = flattenTrees(formValue.menus);
-var keys=formValue.menus.map((item) => item.id);
-keys.push(...formValue.permissions.map((item) => item.id));
+		var keys = formValue.menus.map((item) => "m_" + item.id);
+		keys.push(...formValue.permissions.map((item) => "p_" + item.id));
 
-//keys.push('1388473344772280320')
+		//keys.push('1388473344772280320')
 		setCheckedKeys(keys);
 	}, [formValue]);
 
@@ -134,11 +167,7 @@ keys.push(...formValue.permissions.map((item) => item.id));
 												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
 												placeholder="Please select"
 												style={{ width: "100%" }}
-												onChange={(values: string[]) => {
-													setCheckedKeys(values);
-													const selectedMenus = values.map((id) => findNodeById(MenuTree, id)).filter(Boolean) as MenusPermissionTree[];
-												//	form.setValue("menus", selectedMenus);
-												}}
+												onChange={handleOnchange}
 											/>
 										</FormControl>
 									</div>
@@ -153,7 +182,7 @@ keys.push(...formValue.permissions.map((item) => item.id));
 					</Button>
 					<Button
 						onClick={() => {
-							form.handleSubmit(onOk)();
+							form.handleSubmit(onSubmit)();
 						}}
 					>
 						Save

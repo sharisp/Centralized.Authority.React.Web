@@ -41,7 +41,7 @@ axiosInstance.interceptors.response.use(
 		const { response, message } = error || {};
 		const errMsg = response?.data?.errorMsg || message || t("sys.api.errorMessage");
 		toast.error(errMsg, { position: "top-center" });
-		if (response?.status === 401) {
+		if (response?.status === 401 || response?.status === 403) {
 			userStore.getState().actions.clearUserInfoAndToken();
 		}
 		return Promise.reject(error);
@@ -50,7 +50,18 @@ axiosInstance.interceptors.response.use(
 
 class APIClient {
 	get<T = unknown>(config: AxiosRequestConfig): Promise<T> {
-		return this.request<T>({ ...config, method: "GET" });
+
+		const filteredParams = Object.fromEntries(
+			Object.entries(config.params || {}).filter(
+				([_, v]) => v !== undefined && v !== null && v !== ""
+			)
+		);
+		console.log(filteredParams)
+		return this.request<T>({
+			...config,
+			method: "GET",
+			params: filteredParams,
+		});
 	}
 	post<T = unknown>(config: AxiosRequestConfig): Promise<T> {
 		return this.request<T>({ ...config, method: "POST" });
