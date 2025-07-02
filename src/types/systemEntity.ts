@@ -23,3 +23,11 @@ export interface PagenationData<T> {
 	totalCount: number;
 	dataList: T[]
 }
+
+export interface User {
+	id: number;
+	userName: string;
+	realName?: string;
+	email?: string;
+	roles: Role[];
+}

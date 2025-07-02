@@ -14,18 +14,13 @@ import { Textarea } from "@/ui/textarea";
 import { convertToMenuPermissionTree } from "@/utils/tree";
 import roleService, { RoleCreate } from "@/api/services/roleService";
 import { toast } from "sonner";
+import { ModalProps } from "@/types/types";
 
 
-export type RoleModalProps = {
-	formValue: Role;
-	title: string;
-	show: boolean;
-	onOk: VoidFunction;
-	onCancel: VoidFunction;
-};
+
 
 const { SHOW_PARENT } = TreeSelect;
-export function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModalProps) {
+export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps<Role>) {
 	//const [Menus, setMenus] = useState<UserMenus[]>([]);
 	//const [Menus1, setMenusWithPermission] = useState<UserMenus[]>([]);
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
@@ -76,8 +71,9 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: RoleModalP
 
 			} else {
 				await roleService.update(role)
-				toast.success("update success")
 			}
+
+			toast.success("operate success")
 			onOk()
 		} catch {
 			toast.error("operation error")

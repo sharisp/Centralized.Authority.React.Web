@@ -6,12 +6,11 @@ import { Card, CardContent, CardHeader } from "@/ui/card";
 import Table, { type ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import type { PagenationParam, Role } from "#/systemEntity";
-import { RoleModal, type RoleModalProps } from "./role-modal";
+import { RoleModal } from "./role-modal";
 import { Col, Form, Input, Row, Space } from "antd";
 import { toast } from "sonner";
+import { ModalProps } from "@/types/types";
 
-// TODO: fix
-// const ROLES: Role_Old[] = ROLE_LIST as Role_Old[];
 const DEFAULE_ROLE_VALUE: Role = {
 	id: 0,
 	roleName: "",
@@ -20,13 +19,7 @@ const DEFAULE_ROLE_VALUE: Role = {
 	permissions: [],
 };
 export default function RolePage() {
-	/*const [dataList, setDataList] = useState<Role[]>([])
-	const [isLoading, setIsLoading] = useState(false)
-	const [queryParams, setQueryParams] = useState({})
-	const [totalPage, setTotalPage] = useState(0)
-	const [pageIndex, setpageIndex] = useState(1)
-	const [pageSize, setPageSize] = useState(20)
-*/
+
 	const [isLoading, setIsLoading] = useState(false)
 
 	const [paginationData, setPaginationData] = useState({
@@ -53,14 +46,13 @@ export default function RolePage() {
 			toast.error("get list error")
 		}
 
-		//setTotalPage(data.totalCount)
 		setIsLoading(false)
 	}
 
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const [roleModalPros, setRoleModalProps] = useState<RoleModalProps>({
+	const [roleModalPros, setRoleModalProps] = useState<ModalProps<Role>>({
 		formValue: { ...DEFAULE_ROLE_VALUE },
 		title: "New",
 		show: false,
