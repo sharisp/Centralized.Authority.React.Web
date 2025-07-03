@@ -3,7 +3,7 @@ import { Icon } from "@/components/icon";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
 import Table, { type ColumnsType } from "antd/es/table";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PagenationParam, User } from "#/systemEntity";
 //import { RoleModal, type RoleModalProps } from "./role-modal";
 import { Col, Form, Input, Row, Space } from "antd";
@@ -35,10 +35,10 @@ export default function UserPage() {
 		pageSize: 20,
 	});
 
-	const getList = async () => {
+	const getList = async (queryPara: PagenationParam) => {
 		setIsLoading(true)
 		try {
-			const data = await userService.getpaginationlist(queryState)
+			const data = await userService.getpaginationlist(queryPara)
 			setPaginationData({
 				totalCount: data.totalCount,
 				dataList: data.dataList
@@ -62,7 +62,7 @@ export default function UserPage() {
 				toast.error("delete error," + error)
 			}
 
-			getList()
+			getList(queryStateRef.current)
 		}
 		setIsLoading(false)
 
@@ -75,7 +75,7 @@ export default function UserPage() {
 		title: "New",
 		show: false,
 		onOk: () => {
-			getList()
+			getList(queryStateRef.current)
 			setModalProps((prev) => ({ ...prev, show: false }));
 
 		},
@@ -108,11 +108,14 @@ export default function UserPage() {
 			),
 		},
 	];
+	const queryStateRef = useRef(queryState)
 	useEffect(() => {
-		console.log(queryState)
-		getList()
-	}
-		, [queryState])
+		queryStateRef.current = queryState
+	}, [queryState])
+
+	useEffect(() => {
+		getList(queryState)
+	}, [])
 	const [searchForm] = Form.useForm();
 	const onCreate = () => {
 		setModalProps((prev) => ({
@@ -147,25 +150,26 @@ export default function UserPage() {
 	const onSearch = () => {
 
 		const formvalues = searchForm.getFieldsValue()
-
-		setQueryState(prev => ({
-			...prev,
+		const newQueryState = {
+			...queryState,
 			pageIndex: 1,
 			queryParams: formvalues,
-		}))
-
-		//pageindex, pagesize更新usestate是异步的，直接查询不行，或者传参 或者用useeffect跟踪这几个参数
-		//getList()
+		}
+		setQueryState(newQueryState)
+		getList(newQueryState)
 	}
 	const onPageChange = (pagination: { current?: number; pageSize?: number }) => {
 
 		const { current, pageSize } = pagination
-		setQueryState(prev => ({
-			...prev,
-			pageIndex: current ?? prev.pageIndex,
-			pageSize: pageSize ?? prev.pageSize,
-		}));
-		//getList()
+
+		const newQueryState = {
+			...queryState,
+			pageIndex: current ?? queryState.pageIndex,
+			pageSize: pageSize ?? queryState.pageSize,
+		}
+		setQueryState(newQueryState)
+		getList(newQueryState)
+
 	}
 
 	const formStyle: React.CSSProperties = {
@@ -176,7 +180,7 @@ export default function UserPage() {
 	return (
 		<Card>
 			<CardHeader>
-				<div style={{ width: '100%' }}>Role List</div>
+				<div style={{ width: '100%' }}>User List</div>
 				<div className="items-center justify-between">
 					<Form form={searchForm} name="advanced_search" style={formStyle} onFinish={onSearch}>
 						<Row gutter={24}>	<Col span={8} key={1}>
@@ -214,7 +218,7 @@ export default function UserPage() {
 				<Table<User> rowKey="id" size="small" loading={isLoading} scroll={{ x: 'max-content', y: 55 * 5 }}
 					pagination={{
 						total: paginationData.totalCount, position: ['bottomRight'], showSizeChanger: true, showQuickJumper: true,
-						showTotal: (total) => `Total ${total} items`
+						showTotal: (total) => `Total ${total} items`, current: queryState.pageIndex, pageSize: queryState.pageSize
 					}} columns={columns} dataSource={paginationData.dataList} onChange={onPageChange} />
 
 			</CardContent>

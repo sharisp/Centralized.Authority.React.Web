@@ -4,27 +4,35 @@ import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
 import Table, { type ColumnsType } from "antd/es/table";
 import { useEffect, useRef, useState } from "react";
-import type { PagenationParam, Permission } from "#/systemEntity";
+import type { PagenationParam } from "#/systemEntity";
 //import { RoleModal, type RoleModalProps } from "./role-modal";
 import { Col, Form, Input, Row, Space } from "antd";
 import { toast } from "sonner";
 import { ModalProps } from "@/types/types";
-import { PermissionModal } from "./permission-modal";
-import permissionService from "@/api/services/permissionService";
+import { MenuModal } from "./menu-modal";
+import { MenuType, UserMenus } from "@/types/loginEntity";
+import menuService from "@/api/services/menuService";
 
-const DEFAULE_VALUE: Permission = {
+const DEFAULE_VALUE: UserMenus = {
 	id: "",
 	title: "",
+	path: "",
+	parentId: "",
+	icon: "",
+	sort: 0,
+	type: MenuType.Catelogue,
+	isShow: true,
+	description: "",
+	permissions: [],
 	systemName: "",
-	permissionKey: "",
 };
 
-export default function permissionPage() {
+export default function menuPage() {
 
 	const [isLoading, setIsLoading] = useState(false)
 
 	const [paginationData, setPaginationData] = useState({
-		dataList: [] as Permission[],
+		dataList: [] as UserMenus[],
 		totalCount: 0,
 	})
 	const [queryState, setQueryState] = useState<PagenationParam>({
@@ -45,7 +53,7 @@ export default function permissionPage() {
 	const getList = async (queryPara: PagenationParam) => {
 		setIsLoading(true)
 		try {
-			const data = await permissionService.getpaginationlist(queryPara)
+			const data = await menuService.getpaginationlist(queryPara)
 			setPaginationData({
 				totalCount: data.totalCount,
 				dataList: data.dataList
@@ -63,7 +71,7 @@ export default function permissionPage() {
 		if (window.confirm("are you sure to delete?")) {
 
 			try {
-				await permissionService.del(id)
+				await menuService.del(id)
 				toast.success("delete success")
 			} catch (error) {
 				toast.error("delete error," + error)
@@ -77,13 +85,11 @@ export default function permissionPage() {
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const [modalPros, setModalProps] = useState<ModalProps<Permission>>({
+	const [modalPros, setModalProps] = useState<ModalProps<UserMenus>>({
 		formValue: { ...DEFAULE_VALUE },
 		title: "New",
 		show: false,
 		onOk: () => {
-			//const latestQuery = { ...queryState };
-			//	console.log("latest", latestQuery, queryStateRef.current)
 			getList(queryStateRef.current)
 			setModalProps((prev) => ({ ...prev, show: false }));
 		},
@@ -91,14 +97,15 @@ export default function permissionPage() {
 			setModalProps((prev) => ({ ...prev, show: false }));
 		},
 	});
-	const columns: ColumnsType<Permission> = [
+	const columns: ColumnsType<UserMenus> = [
 		{
 			title: "SystemName",
 			dataIndex: "systemName",
 		},
 		{ title: "Title", dataIndex: "title" },
-		{ title: "PermissionKey", dataIndex: "permissionKey" },
-
+		{
+			title: "Type", dataIndex: "type", render: (value: MenuType) => <p>{MenuType[value]}</p>,
+		},
 		{
 			title: "Action",
 			key: "operation",
@@ -129,10 +136,10 @@ export default function permissionPage() {
 			},
 		}));
 	};
-	const onEdit = async (formValue: Permission) => {
+	const onEdit = async (formValue: UserMenus) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		try {
-			const detail = await permissionService.findById(formValue.id);
+			const detail = await menuService.findById(formValue.id);
 
 			setModalProps((prev) => ({
 				...prev,
@@ -184,7 +191,7 @@ export default function permissionPage() {
 	return (
 		<Card>
 			<CardHeader>
-				<div style={{ width: '100%' }}>Permission List</div>
+				<div style={{ width: '100%' }}>UserMenus List</div>
 				<div className="items-center justify-between">
 					<Form form={searchForm} name="advanced_search" style={formStyle} onFinish={onSearch}>
 						<Row gutter={24}>	<Col span={8} key={1}>
@@ -192,8 +199,8 @@ export default function permissionPage() {
 								<Input placeholder="input title" />
 							</Form.Item>
 						</Col>		<Col span={8} key={2}>
-								<Form.Item label="permissionKey" name="permissionKey">
-									<Input placeholder="input permissionKey" />
+								<Form.Item label="SystemName" name="systemName">
+									<Input placeholder="input SystemName" />
 								</Form.Item>
 							</Col>
 							<Col span={8} key={3}>
@@ -219,14 +226,14 @@ export default function permissionPage() {
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Table<Permission> rowKey="id" size="small" loading={isLoading} scroll={{ x: 'max-content', y: 55 * 5 }}
+				<Table<UserMenus> rowKey="id" size="small" loading={isLoading} scroll={{ x: 'max-content', y: 55 * 5 }}
 					pagination={{
 						total: paginationData.totalCount, position: ['bottomRight'], showSizeChanger: true, showQuickJumper: true,
 						showTotal: (total) => `Total ${total} items`, current: queryState.pageIndex, pageSize: queryState.pageSize
 					}} columns={columns} dataSource={paginationData.dataList} onChange={onPageChange} />
 
 			</CardContent>
-			<PermissionModal {...modalPros} />
+			<MenuModal {...modalPros} />
 		</Card >
 
 

@@ -2,7 +2,6 @@ import { DB_USER } from "@/_mock/assets_backup";
 import type { SignInReq } from "@/api/services/userService";
 //import { Icon } from "@/components/icon";
 import { GLOBAL_CONFIG } from "@/global-config";
-import { useRouteStore } from "@/store/routerStore";
 import { useSignIn } from "@/store/userStore";
 import { Button } from "@/ui/button";
 import { Checkbox } from "@/ui/checkbox";
@@ -44,8 +43,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 			//	const routes = getRoutes();
 			//	console.log(routes);
 
-			console.log(useRouteStore.getState().routes);
-			console.log("aa");
+
 			//	navigatge(GLOBAL_CONFIG.homepage, { replace: true });
 			setTimeout(() => {
 				navigatge(GLOBAL_CONFIG.homepage, { replace: true });

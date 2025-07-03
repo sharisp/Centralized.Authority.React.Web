@@ -14,10 +14,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
 	(config) => {
-		const { userInfo, userToken } = userStore.getState();
-
-		console.log(userStore.getState(), userInfo, userToken);
-		config.headers.Authorization = `Bearer ${userStore.getState().userToken.accessToken}`;
+		const accessToken = userStore.getState().userToken?.accessToken;
+		//	console.log("设置 Authorization:", accessToken);
+		config.headers.Authorization = `Bearer ${accessToken}`;
 		return config;
 	},
 	(error) => Promise.reject(error),
@@ -27,7 +26,7 @@ axiosInstance.interceptors.response.use(
 		console.log(res);
 		//	if (!res.data) throw new Error(t("sys.api.apiRequestFailed"));
 		const { success, data, statusCode, errorMsg } = res.data;
-		if (statusCode === 401 || statusCode === 403) {
+		if (statusCode === 401) {
 			console.log(success, data, statusCode, errorMsg);
 			userStore.getState().actions.clearUserInfoAndToken();
 		}
@@ -41,7 +40,7 @@ axiosInstance.interceptors.response.use(
 		const { response, message } = error || {};
 		const errMsg = response?.data?.errorMsg || message || t("sys.api.errorMessage");
 		toast.error(errMsg, { position: "top-center" });
-		if (response?.status === 401 || response?.status === 403) {
+		if (response?.status === 401) {
 			userStore.getState().actions.clearUserInfoAndToken();
 		}
 		return Promise.reject(error);

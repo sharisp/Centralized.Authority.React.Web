@@ -57,7 +57,7 @@ export function convertFlatToTree<T extends { id: string; parentId: string }>(it
 	return result;
 }
 
-export function convertToMenuPermissionTree(items: UserMenus[]): MenusPermissionTree[] {
+export function convertToMenuPermissionTree(items: UserMenus[], containMenu: boolean = true): MenusPermissionTree[] {
 
 	const itemMap = new Map<string, MenusPermissionTree>();
 	const result: MenusPermissionTree[] = [];
@@ -70,7 +70,10 @@ export function convertToMenuPermissionTree(items: UserMenus[]): MenusPermission
 			itemMap.set("m_" + item.id, { id: "m_" + item.id, title: item.title, parentId: "s_" + item.systemName, menuType: item.type, children: [] });
 
 		} else {
-			itemMap.set("m_" + item.id, { id: "m_" + item.id, title: item.title, parentId: "m_" + item.parentId, menuType: item.type, children: [] });
+			if (!(containMenu === false && item.type === MenuType.Menu)) {
+				itemMap.set("m_" + item.id, { id: "m_" + item.id, title: item.title, parentId: "m_" + item.parentId, menuType: item.type, children: [] });
+
+			}
 
 		}
 		if (item.type === MenuType.Menu && item.permissions != null) {

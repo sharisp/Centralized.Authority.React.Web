@@ -78,7 +78,6 @@ export function UserModal({ title, show, formValue, onOk, onCancel }: ModalProps
 	//use unknown
 	useEffect(() => {
 		var keys = formValue.roles.map((item) => item.id);
-
 		setCheckedKeys(keys);
 	}, [formValue]);
 
