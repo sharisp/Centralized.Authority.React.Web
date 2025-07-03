@@ -5,3 +5,8 @@ export type ModalProps<T> = {
   onOk: VoidFunction;
   onCancel: VoidFunction;
 };
+
+export type SelectOptionProps<T> = {
+  label: string;
+  value: T
+}

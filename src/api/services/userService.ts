@@ -24,14 +24,21 @@ export enum UserApi {
 	RolePagination = "/identity/api/user/pagination",
 	User = "/identity/api/user",
 }
-
+export interface UserCreate {
+	userName: string;
+	realName?: string;
+	email?: string;
+	roleIds: Number[];
+}
 const signin = (data: SignInReq) => apiClient.post<UserLoginResponse>({ url: UserApi.SignIn, data });
 
 const logout = () => apiClient.get({ url: UserApi.Logout });
-const findById = (id: number) => apiClient.get<UserInfo[]>({ url: `${UserApi.User}/${id}` });
+const findById = (id: Number) => apiClient.get<UserInfo[]>({ url: `${UserApi.User}/${id}` });
 
-const create = (data: User) => apiClient.post<BaseResponse>({ url: UserApi.User, data });
-const update = (data: User) => apiClient.put<BaseResponse>({ url: `${UserApi.User}/${data.id}`, data });
+const del = (id: Number) => apiClient.delete<BaseResponse>({ url: `${UserApi.User}/${id}` });
+
+const create = (data: UserCreate) => apiClient.post<BaseResponse>({ url: UserApi.User, data });
+const update = (id: Number, data: UserCreate) => apiClient.put<BaseResponse>({ url: `${UserApi.User}/${id}`, data });
 const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) => apiClient.get<PagenationData<User>>({
 	url: UserApi.RolePagination,
 	params: { pageIndex, pageSize, ...queryParams }
@@ -42,5 +49,6 @@ export default {
 	update,
 	findById,
 	logout,
-	getpaginationlist
+	getpaginationlist,
+	del
 };

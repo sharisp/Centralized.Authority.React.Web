@@ -27,6 +27,7 @@ export interface PagenationData<T> {
 export interface User {
 	id: number;
 	userName: string;
+	password: string;
 	realName?: string;
 	email?: string;
 	roles: Role[];

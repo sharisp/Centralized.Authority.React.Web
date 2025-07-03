@@ -16,6 +16,7 @@ const DEFAULE_VALUE: User = {
 	id: 0,
 	userName: "",
 	realName: "",
+	password: "",
 	email: "",
 	roles: [],
 };
@@ -34,7 +35,6 @@ export default function UserPage() {
 		pageSize: 20,
 	});
 
-
 	const getList = async () => {
 		setIsLoading(true)
 		try {
@@ -50,7 +50,23 @@ export default function UserPage() {
 
 		setIsLoading(false)
 	}
+	const onDel = async (id: Number) => {
 
+		setIsLoading(true)
+		if (window.confirm("are you sure to delete?")) {
+
+			try {
+				await userService.del(id)
+				toast.success("delete success")
+			} catch (error) {
+				toast.error("delete error," + error)
+			}
+
+			getList()
+		}
+		setIsLoading(false)
+
+	}
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
@@ -85,7 +101,7 @@ export default function UserPage() {
 					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
 						<Icon icon="solar:pen-bold-duotone" size={18} />
 					</Button>
-					<Button variant="ghost" size="icon">
+					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)} >
 						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
 					</Button>
 				</div>
@@ -204,5 +220,7 @@ export default function UserPage() {
 			</CardContent>
 			<UserModal {...modalPros} />
 		</Card >
+
+
 	);
 }
