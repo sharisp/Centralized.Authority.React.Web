@@ -12,6 +12,8 @@ import { MenusPermissionTree, MenuType, UserMenus } from "@/types/loginEntity";
 import menuService from "@/api/services/menuService";
 import { Select, TreeSelect } from "antd";
 import { convertToMenuPermissionTree } from "@/utils/tree";
+import { Sys } from "@/types/systemEntity";
+import sysService from "@/api/services/sysService";
 
 const { SHOW_PARENT } = TreeSelect;
 export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps<UserMenus>) {
@@ -20,6 +22,15 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 	const [menuTypeVal, setMenuTypeVal] = useState<MenuType>(MenuType.Catelogue)
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
 
+	const [systemListState, setSysListState] = useState<Sys[]>([])
+	const [sysName, setSysName] = useState('')
+	useEffect(
+		() => {
+
+			sysService.getlist().then(data => setSysListState(data))
+				.catch(err => toast.error("get sys list error," + err))
+
+		}, [])
 
 	const form = useForm<UserMenus>({
 		defaultValues: formValue,
@@ -46,7 +57,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 		const model: UserMenus = {
 			id: "",
 			title: form.getValues().title,
-			systemName: form.getValues().systemName,
+			systemName: sysName,
 			path: form.getValues().path,
 			parentId: parentid,
 			icon: form.getValues().icon,
@@ -75,12 +86,17 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 		}
 
 	};
+	const handleSelectChange = (value: string) => {
+		setSysName(value)
+	}
 
 	const handleChange = (value: MenuType) => {
 		setMenuTypeVal(value)
 	}
 	useEffect(() => {
 		setMenuTypeVal(formValue.type)
+
+		setSysName(String(formValue.systemName))
 		const fetchMenus = async () => {
 			try {
 				//		const fetchedMenus = await menuService.getAllMenuList("");
@@ -96,6 +112,9 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 		var key = 'm_' + formValue.parentId
 		if (key === 'm_0') {
 			key = 's_' + formValue.systemName
+		}
+		if (key === 'm_') {
+			key = ''
 		}
 		setCheckedKey(key)
 		fetchMenus();
@@ -125,12 +144,23 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 						<FormField
 							control={form.control}
 							name="systemName"
-							render={({ field }) => (
+							render={() => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">System Name</FormLabel>
 									<div className="col-span-3">
 										<FormControl>
-											<Input {...field} />
+											<Select
+												value={sysName}
+												fieldNames={{
+													label: 'systemName',
+													value: 'systemName',
+												}}
+												options={systemListState}
+												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
+												style={{ width: '100%' }}
+												onChange={handleSelectChange}
+
+											/>
 										</FormControl>
 									</div>
 								</FormItem>

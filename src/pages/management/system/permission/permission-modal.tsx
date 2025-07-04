@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/ui/button";
@@ -8,12 +8,22 @@ import { Input } from "@/ui/input";
 
 import { toast } from "sonner";
 import { ModalProps } from "@/types/types";
-import { Permission } from "@/types/systemEntity";
+import { Permission, Sys } from "@/types/systemEntity";
 import permissionService from "@/api/services/permissionService";
+import sysService from "@/api/services/sysService";
+import { Select } from "antd";
 
 export function PermissionModal({ title, show, formValue, onOk, onCancel }: ModalProps<Permission>) {
 
+	const [systemListState, setSysListState] = useState<Sys[]>([])
+	const [sysName, setSysName] = useState('')
+	useEffect(
+		() => {
 
+			sysService.getlist().then(data => setSysListState(data))
+				.catch(err => toast.error("get sys list error," + err))
+
+		}, [])
 	const form = useForm<Permission>({
 		defaultValues: formValue,
 	});
@@ -25,7 +35,7 @@ export function PermissionModal({ title, show, formValue, onOk, onCancel }: Moda
 			id: "",
 			title: form.getValues().title,
 			permissionKey: form.getValues().permissionKey,
-			systemName: form.getValues().systemName,
+			systemName: sysName
 
 		}
 		const id = form.getValues().id
@@ -46,9 +56,12 @@ export function PermissionModal({ title, show, formValue, onOk, onCancel }: Moda
 
 	};
 
-
+	const handleSelectChange = (value: string) => {
+		setSysName(value)
+	}
 	useEffect(() => {
 		form.reset(formValue);
+		setSysName(String(formValue.systemName))
 	}, [formValue, form]);
 
 	return (
@@ -74,12 +87,23 @@ export function PermissionModal({ title, show, formValue, onOk, onCancel }: Moda
 						<FormField
 							control={form.control}
 							name="systemName"
-							render={({ field }) => (
+							render={() => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">System Name</FormLabel>
 									<div className="col-span-3">
 										<FormControl>
-											<Input {...field} />
+											<Select
+												value={sysName}
+												fieldNames={{
+													label: 'systemName',
+													value: 'systemName',
+												}}
+												options={systemListState}
+												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
+												style={{ width: '100%' }}
+												onChange={handleSelectChange}
+
+											/>
 										</FormControl>
 									</div>
 								</FormItem>

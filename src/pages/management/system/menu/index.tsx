@@ -20,6 +20,7 @@ const DEFAULE_VALUE: UserMenus = {
 	parentId: "",
 	icon: "",
 	sort: 0,
+	component: "",
 	type: MenuType.Catelogue,
 	isShow: true,
 	description: "",

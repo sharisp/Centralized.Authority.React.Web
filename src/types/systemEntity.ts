@@ -32,3 +32,9 @@ export interface User {
 	email?: string;
 	roles: Role[];
 }
+
+export interface Sys {
+	id: number;
+	systemName: string;
+	systemCode: string;
+}
