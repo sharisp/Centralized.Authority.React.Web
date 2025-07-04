@@ -5,7 +5,6 @@ import { Button } from "@/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/dropdown-menu";
 import { faker } from "@faker-js/faker";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router";
 
 /**
  * Account Dropdown

@@ -15,8 +15,8 @@ export enum MenuApi {
 
 const findById = (id: string) => apiClient.get<UserMenus>({ url: `${MenuApi.Detail}/${id}` });
 
-const create = (data: UserMenus) => apiClient.post<BaseResponse>({ url: MenuApi.Menu, data });
-const update = (id: string, data: UserMenus) => apiClient.put<BaseResponse>({ url: `${MenuApi.Menu}/${id}`, data });
+const create = (data: UserMenus & { permissionIds: string[] }) => apiClient.post<BaseResponse>({ url: MenuApi.Menu, data });
+const update = (id: string, data: UserMenus & { permissionIds: string[] }) => apiClient.put<BaseResponse>({ url: `${MenuApi.Menu}/${id}`, data });
 const getUserMenuList = (systemname: string) => apiClient.get<UserMenus[]>({ url: `${MenuApi.UserMenu}/${systemname}` });
 const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) => apiClient.get<PagenationData<UserMenus>>({
 	url: MenuApi.Pagination,

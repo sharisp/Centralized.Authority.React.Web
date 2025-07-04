@@ -12,10 +12,12 @@ import { MenusPermissionTree, MenuType, UserMenus } from "@/types/loginEntity";
 import menuService from "@/api/services/menuService";
 import { Select, TreeSelect } from "antd";
 import { convertToMenuPermissionTree } from "@/utils/tree";
-import { Sys } from "@/types/systemEntity";
+import { Permission, Sys } from "@/types/systemEntity";
 import sysService from "@/api/services/sysService";
+import permissionService from "@/api/services/permissionService";
 
 const { SHOW_PARENT } = TreeSelect;
+let allPermissions: Permission[] = []
 export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps<UserMenus>) {
 
 
@@ -23,12 +25,18 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
 
 	const [systemListState, setSysListState] = useState<Sys[]>([])
+
+	const [permissionListState, setPermissionListState] = useState<Permission[]>([])
 	const [sysName, setSysName] = useState('')
+
+	const [isCreate, setIsCreate] = useState(false)
 	useEffect(
 		() => {
 
 			sysService.getlist().then(data => setSysListState(data))
 				.catch(err => toast.error("get sys list error," + err))
+
+			permissionService.getlist().then(data => allPermissions = data).catch(err => toast.error("get permission list error," + err))
 
 		}, [])
 
@@ -37,6 +45,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 	});
 
 	const [checkedKey, setCheckedKey] = useState<string>("");
+	const [checkedPermissionKeys, setCheckedPermissionKeys] = useState<string[]>([]);
 
 	//use unknown
 	const handleOnTreechange = (item: string) => {
@@ -54,7 +63,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 			toast.error("can not set this as its parent")
 			return
 		}
-		const model: UserMenus = {
+		const model: UserMenus & { permissionIds: string[] } = {
 			id: "",
 			title: form.getValues().title,
 			systemName: sysName,
@@ -66,8 +75,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 			isShow: true,
 			description: form.getValues().systemName,
 			permissions: [],
-
-
+			permissionIds: checkedPermissionKeys
 		}
 		const id = form.getValues().id
 		try {
@@ -88,15 +96,31 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 	};
 	const handleSelectChange = (value: string) => {
 		setSysName(value)
+		const permissions = allPermissions.filter(t => t.systemName === value)
+		setPermissionListState(permissions)
 	}
 
 	const handleChange = (value: MenuType) => {
 		setMenuTypeVal(value)
 	}
+	const handlePermissionChange = (Values: string[]) => {
+		console.log(Values)
+		setCheckedPermissionKeys(Values)
+	}
 	useEffect(() => {
+		setIsCreate(formValue.id === '')
 		setMenuTypeVal(formValue.type)
 
 		setSysName(String(formValue.systemName))
+		const permissions = allPermissions.filter(t => t.systemName === formValue.systemName)
+
+		setPermissionListState(permissions)
+		if (formValue.permissions != null && formValue.permissions.length > 0) {
+
+			setCheckedPermissionKeys(formValue.permissions.map(t => t.id))
+		} else {
+			setCheckedPermissionKeys([])
+		}
 		const fetchMenus = async () => {
 			try {
 				//		const fetchedMenus = await menuService.getAllMenuList("");
@@ -118,6 +142,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 		}
 		setCheckedKey(key)
 		fetchMenus();
+
 		form.reset(formValue);
 	}, [formValue, form]);
 
@@ -151,6 +176,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 										<FormControl>
 											<Select
 												value={sysName}
+												disabled={(isCreate === false)}
 												fieldNames={{
 													label: 'systemName',
 													value: 'systemName',
@@ -202,7 +228,8 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 									</div>
 								</FormItem>
 							)}
-						/>	<FormField
+						/>
+						<FormField
 							control={form.control}
 							name="type"
 							render={() => (
@@ -252,6 +279,36 @@ export function MenuModal({ title, show, formValue, onOk, onCancel }: ModalProps
 												onSelect={handleOnTreechange}
 											/>
 										</FormControl>
+									</div>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="permissions"
+							render={() => (
+								<FormItem className="grid grid-cols-4 items-center gap-4">
+									<FormLabel className="text-right">Permissions</FormLabel>
+									<div className="col-span-3">
+										<FormControl>{
+											<Select
+												mode="multiple"
+												defaultValue={checkedPermissionKeys}
+												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
+												style={{ width: '100%' }}
+												fieldNames={{
+													label: 'title',
+													value: 'id'
+												}}
+												showSearch
+												optionFilterProp="title"
+												filterSort={(optionA, optionB) =>
+													(optionA?.title ?? '').toLowerCase().localeCompare((optionB?.title ?? '').toLowerCase())}
+												onChange={handlePermissionChange}
+												options={permissionListState}
+											/>
+										}</FormControl>
 									</div>
 								</FormItem>
 							)}
