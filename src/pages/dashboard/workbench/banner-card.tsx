@@ -5,7 +5,7 @@ import { useUserInfo } from "@/store/userStore";
 import { themeVars } from "@/theme/theme.css";
 
 export default function BannerCard() {
-	const { username } = useUserInfo();
+	const { userName } = useUserInfo();
 
 	const bg = `linear-gradient(135deg, rgba(${themeVars.colors.palette.primary.lightChannel}/ .2), rgba(${themeVars.colors.palette.primary.defaultChannel}/ .2)) ${themeVars.colors.common.white}`;
 
@@ -13,20 +13,34 @@ export default function BannerCard() {
 		<div className="rounded-2xl p-7 flex flex-col md:flex-row" style={{ background: bg }}>
 			<div className="flex-1 text-center md:text-left">
 				<div className="mt-4 text-lg font-semibold md:text-xl" style={{ color: themeVars.colors.palette.primary.dark }}>
-					<h4>Welcome back 👋 </h4>
-					<h4>{username}</h4>
+					<h4>Welcome here 👋 </h4>
+					<h4>{userName}</h4>
 				</div>
 				<div style={{ color: themeVars.colors.palette.primary.dark }} className="mx-auto mb-6 mt-4 max-w-sm text-sm opacity-80 md:mx-0">
-					Welcome to join the Discord channel to discuss everything about {GLOBAL_CONFIG.appName}, or you can visite my blog:
+					Welcome to use {GLOBAL_CONFIG.appName},  you can visite my github to find more:
 					<div>
 						<a
-							href="https://blog.slashspaces.com"
+							href="https://github.com/sharisp"
 							target="_blank"
 							className="text-base opacity-80"
 							style={{ color: themeVars.colors.palette.primary.dark }}
 							rel="noreferrer"
 						>
-							👉 https://blog.slashspaces.com
+							👉 https://github.com/sharisp
+						</a>
+					</div>
+				</div>
+				<div style={{ color: themeVars.colors.palette.primary.dark }} className="mx-auto mb-6 mt-4 max-w-sm text-sm opacity-80 md:mx-0">
+					you can contact me through my Linkedin:
+					<div>
+						<a
+							href="https://www.linkedin.com/in/tonghai-wang-435805203/"
+							target="_blank"
+							className="text-base opacity-80"
+							style={{ color: themeVars.colors.palette.primary.dark }}
+							rel="noreferrer"
+						>
+							👉 https://www.linkedin.com/in/tonghai-wang-435805203/
 						</a>
 					</div>
 				</div>

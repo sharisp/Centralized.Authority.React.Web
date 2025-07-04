@@ -9,26 +9,6 @@ import AppRouter from "./routes/AppRouter";
 //import { urlJoin } from "./utils";
 
 await registerLocalIcons();
-/*
-const router = createBrowserRouter(
-	[
-		{
-			Component: () => (
-				<App>
-					<Outlet />
-				</App>
-			),
-			errorElement: <ErrorBoundary fallbackRender={PageError} />,
-			children: getRroutesSection(),
-		},
-	],
-	{
-		basename: GLOBAL_CONFIG.basePath,
-	},
-);
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-root.render(<RouterProvider router={router} />);
-*/
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(<AppRouter />);
