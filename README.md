@@ -1,6 +1,6 @@
 # 🔐 Centralized Authority Web
 
-A modern **React + TypeScript** web frontend for a centralized **permissions management microservice**, featuring a sleek UI inspired by [slash-admin](https://github.com/d3george/slash-admin) and powered by a robust backend API: [Centralized.Authority](https://github.com/sharisp/Centralized.Authority).
+A modern **React + TypeScript** web frontend for a centralized **permissions management microservice**, featuring a sleek UI inspired by [slash-admin](https://github.com/d3george/slash-admin) and powered by my robust backend API: [Centralized.Authority](https://github.com/sharisp/Centralized.Authority).
 
 ---
 
