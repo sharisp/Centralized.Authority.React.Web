@@ -25,16 +25,15 @@ jobs:
 
       - name: Install pnpm
         run: npm install -g pnpm
+
       - name: Install dependencies and build
         run: pnpm install && pnpm build
-
 
       - name: Get Id Token
         uses: actions/github-script@v6
         id: idtoken
         with:
           script: |
-            const core = require('@actions/core')
             return await core.getIDToken()
           result-encoding: string
 
@@ -43,8 +42,8 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WHITE_TREE_0C41AF600 }}
           action: "upload"
-          app_location: "dist"  # ← 必须和 pnpm build 的输出一致
-          skip_app_build: true  # ← 跳过 Oryx 构建
+          app_location: "dist"
+          skip_app_build: true
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
