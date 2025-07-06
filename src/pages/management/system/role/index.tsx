@@ -19,72 +19,66 @@ const DEFAULE_ROLE_VALUE: Role = {
 	permissions: [],
 };
 export default function RolePage() {
-
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [paginationData, setPaginationData] = useState({
 		dataList: [] as Role[],
 		totalCount: 0,
-	})
+	});
 	const [queryState, setQueryState] = useState<PagenationParam>({
 		queryParams: {},
 		pageIndex: 1,
 		pageSize: 20,
 	});
 
-
 	const getList = async (queryPara: PagenationParam) => {
-		setIsLoading(true)
+		setIsLoading(true);
 		try {
-			const data = await roleService.getpaginationlist(queryPara)
+			const data = await roleService.getpaginationlist(queryPara);
 			setPaginationData({
 				totalCount: data.totalCount,
-				dataList: data.dataList
-
-			})
-		} catch {
-			toast.error("get list error")
+				dataList: data.dataList,
+			});
+		} catch (error) {
+			toast.error(`get list error,${error}`);
 		}
 
-		setIsLoading(false)
-	}
-	const queryStateRef = useRef(queryState)
+		setIsLoading(false);
+	};
+	const queryStateRef = useRef(queryState);
 	useEffect(() => {
-		queryStateRef.current = queryState
-	}, [queryState])
+		queryStateRef.current = queryState;
+	}, [queryState]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		getList(queryState)
-	}, [])
+		getList(queryState);
+	}, []);
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
 	const onDel = async (id: number) => {
-
-		setIsLoading(true)
+		setIsLoading(true);
 		if (window.confirm("are you sure to delete?")) {
-
 			try {
-				await roleService.del(id)
+				await roleService.del(id);
 
-				toast.success("delete success")
+				toast.success("delete success");
 			} catch (error) {
-				toast.error(`delete error,${error}`)
+				toast.error(`delete error,${error}`);
 			}
 
-			getList(queryStateRef.current)
+			getList(queryStateRef.current);
 		}
-		setIsLoading(false)
-
-	}
+		setIsLoading(false);
+	};
 	const [roleModalPros, setRoleModalProps] = useState<ModalProps<Role>>({
 		formValue: { ...DEFAULE_ROLE_VALUE },
 		title: "New",
 		show: false,
 		onOk: () => {
-			getList(queryStateRef.current)
+			getList(queryStateRef.current);
 			setRoleModalProps((prev) => ({ ...prev, show: false }));
-
 		},
 		onCancel: () => {
 			setRoleModalProps((prev) => ({ ...prev, show: false }));
@@ -142,57 +136,57 @@ export default function RolePage() {
 		}));
 	};
 	const onSearch = () => {
-
-		const formvalues = searchForm.getFieldsValue()
+		const formvalues = searchForm.getFieldsValue();
 		const newQueryState = {
-			...queryState, pageIndex: 1,
+			...queryState,
+			pageIndex: 1,
 			queryParams: formvalues,
-		}
-		setQueryState(newQueryState)
+		};
+		setQueryState(newQueryState);
 
 		//pageindex, pagesize更新usestate是异步的，直接查询不行，或者传参 或者用useeffect跟踪这几个参数
-		getList(newQueryState)
-	}
+		getList(newQueryState);
+	};
 	const onPageChange = (pagination: { current?: number; pageSize?: number }) => {
-
-		const { current, pageSize } = pagination
+		const { current, pageSize } = pagination;
 
 		const newQueryState = {
 			...queryState,
 			pageIndex: current ?? queryState.pageIndex,
 			pageSize: pageSize ?? queryState.pageSize,
-		}
-		setQueryState(newQueryState)
-		getList(newQueryState)
-
-	}
+		};
+		setQueryState(newQueryState);
+		getList(newQueryState);
+	};
 
 	const formStyle: React.CSSProperties = {
-		maxWidth: 'none',
+		maxWidth: "none",
 		padding: 24,
 	};
 
 	return (
 		<Card>
 			<CardHeader>
-				<div style={{ width: '100%' }}>Role List</div>
+				<div style={{ width: "100%" }}>Role List</div>
 				<div className="items-center justify-between">
 					<Form form={searchForm} name="advanced_search" style={formStyle} onFinish={onSearch}>
-						<Row gutter={24}>	<Col span={8} key={1}>
-							<Form.Item label="Role Name" name="roleName">
-								<Input placeholder="input Role Name" />
-							</Form.Item>
-						</Col>		<Col span={8} key={2}>
+						<Row gutter={24}>
+							{" "}
+							<Col span={8} key={1}>
+								<Form.Item label="Role Name" name="roleName">
+									<Input placeholder="input Role Name" />
+								</Form.Item>
+							</Col>{" "}
+							<Col span={8} key={2}>
 								<Form.Item label="Description" name="description">
 									<Input placeholder="input description" />
 								</Form.Item>
 							</Col>
 							<Col span={8} key={3}>
 								<Space size="large">
-									<Button type="submit">
-										Search
-									</Button>
-									<Button type="button"
+									<Button type="submit">Search</Button>
+									<Button
+										type="button"
 										onClick={() => {
 											searchForm.resetFields();
 										}}
@@ -200,24 +194,36 @@ export default function RolePage() {
 										Clear
 									</Button>
 
-									<Button type="button" onClick={onCreate}>New</Button>
+									<Button type="button" onClick={onCreate}>
+										New
+									</Button>
 								</Space>
-
 							</Col>
 						</Row>
-
 					</Form>
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Table<Role> rowKey="id" size="small" loading={isLoading} scroll={{ x: 'max-content', y: 55 * 5 }}
+				<Table<Role>
+					rowKey="id"
+					size="small"
+					loading={isLoading}
+					scroll={{ x: "max-content", y: 55 * 5 }}
 					pagination={{
-						total: paginationData.totalCount, position: ['bottomRight'], showSizeChanger: true, showQuickJumper: true,
-						showTotal: (total) => `Total ${total} items`, current: queryState.pageIndex, pageSize: queryState.pageSize
-					}} columns={columns} dataSource={paginationData.dataList} onChange={onPageChange} />
-
+						total: paginationData.totalCount,
+						position: ["bottomRight"],
+						showSizeChanger: true,
+						showQuickJumper: true,
+						showTotal: (total) => `Total ${total} items`,
+						current: queryState.pageIndex,
+						pageSize: queryState.pageSize,
+					}}
+					columns={columns}
+					dataSource={paginationData.dataList}
+					onChange={onPageChange}
+				/>
 			</CardContent>
 			<RoleModal {...roleModalPros} />
-		</Card >
+		</Card>
 	);
 }

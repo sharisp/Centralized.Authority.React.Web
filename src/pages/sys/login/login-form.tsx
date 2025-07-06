@@ -27,8 +27,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
 	const form = useForm<SignInReq>({
 		defaultValues: {
-			username: "admin",
-			password: "admin",
+			username: "guest",
+			password: "123456",
 			systemName: GLOBAL_CONFIG.systemName,
 		},
 	});
@@ -39,11 +39,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 		setLoading(true);
 		try {
 			await signIn(values);
-			//	const routes = getRoutes();
-			//	console.log(routes);
-
-
-			//	navigatge(GLOBAL_CONFIG.homepage, { replace: true });
 			setTimeout(() => {
 				navigatge(GLOBAL_CONFIG.homepage, { replace: true });
 			}, 0);
@@ -63,8 +58,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 	return (
 		<div className={cn("flex flex-col gap-6", className)}>
 			<Form {...form} {...props}>
-
-				<form onSubmit={form.handleSubmit(handleFinish)} className="space-y-4" >
+				<form onSubmit={form.handleSubmit(handleFinish)} className="space-y-4">
 					<div className="flex flex-col items-center gap-2 text-center">
 						<h1 className="text-2xl font-bold">{t("sys.login.signInFormTitle")}</h1>
 						<p className="text-balance text-sm text-muted-foreground">{t("sys.login.signInFormDescription")}</p>
@@ -118,7 +112,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 						{loading && <Loader2 className="animate-spin mr-2" />}
 						{t("sys.login.loginButton")}
 					</Button>
-
 
 					{/* 注册 */}
 					<div className="text-center text-sm">

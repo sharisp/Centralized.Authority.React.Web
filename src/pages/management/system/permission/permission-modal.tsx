@@ -6,62 +6,55 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
-import { toast } from "sonner";
-import { ModalProps } from "@/types/types";
-import { Permission, Sys } from "@/types/systemEntity";
 import permissionService from "@/api/services/permissionService";
 import sysService from "@/api/services/sysService";
+import type { Permission, Sys } from "@/types/systemEntity";
+import type { ModalProps } from "@/types/types";
 import { Select } from "antd";
+import { toast } from "sonner";
 
 export function PermissionModal({ title, show, formValue, onOk, onCancel }: ModalProps<Permission>) {
-
-	const [systemListState, setSysListState] = useState<Sys[]>([])
-	const [sysName, setSysName] = useState('')
-	useEffect(
-		() => {
-
-			sysService.getlist().then(data => setSysListState(data))
-				.catch(err => toast.error("get sys list error," + err))
-
-		}, [])
+	const [systemListState, setSysListState] = useState<Sys[]>([]);
+	const [sysName, setSysName] = useState("");
+	useEffect(() => {
+		sysService
+			.getlist()
+			.then((data) => setSysListState(data))
+			.catch((err) => toast.error(`get sys list error,${err}`));
+	}, []);
 	const form = useForm<Permission>({
 		defaultValues: formValue,
 	});
 
 	const onSubmit = async () => {
-
-
 		const model: Permission = {
 			id: "",
 			title: form.getValues().title,
 			permissionKey: form.getValues().permissionKey,
-			systemName: sysName
-
-		}
-		const id = form.getValues().id
+			systemName: sysName,
+		};
+		const id = form.getValues().id;
 		try {
 			if (id === "0" || id === "") {
 				//new
-				await permissionService.create(model)
-
+				await permissionService.create(model);
 			} else {
-				await permissionService.update(id, model)
+				await permissionService.update(id, model);
 			}
 
-			toast.success("operate success")
-			onOk()
-		} catch {
-			toast.error("operation error")
+			toast.success("operate success");
+			onOk();
+		} catch (error) {
+			toast.error(`operation error,${error}`);
 		}
-
 	};
 
 	const handleSelectChange = (value: string) => {
-		setSysName(value)
-	}
+		setSysName(value);
+	};
 	useEffect(() => {
 		form.reset(formValue);
-		setSysName(String(formValue.systemName))
+		setSysName(String(formValue.systemName));
 	}, [formValue, form]);
 
 	return (
@@ -95,14 +88,13 @@ export function PermissionModal({ title, show, formValue, onOk, onCancel }: Moda
 											<Select
 												value={sysName}
 												fieldNames={{
-													label: 'systemName',
-													value: 'systemName',
+													label: "systemName",
+													value: "systemName",
 												}}
 												options={systemListState}
 												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
-												style={{ width: '100%' }}
+												style={{ width: "100%" }}
 												onChange={handleSelectChange}
-
 											/>
 										</FormControl>
 									</div>
@@ -121,8 +113,6 @@ export function PermissionModal({ title, show, formValue, onOk, onCancel }: Moda
 								</FormItem>
 							)}
 						/>
-
-
 					</div>
 				</Form>
 				<DialogFooter>

@@ -22,13 +22,12 @@ const DEFAULE_VALUE: User = {
 };
 
 export default function UserPage() {
-
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [paginationData, setPaginationData] = useState({
 		dataList: [] as User[],
 		totalCount: 0,
-	})
+	});
 	const [queryState, setQueryState] = useState<PagenationParam>({
 		queryParams: {},
 		pageIndex: 1,
@@ -36,37 +35,33 @@ export default function UserPage() {
 	});
 
 	const getList = async (queryPara: PagenationParam) => {
-		setIsLoading(true)
+		setIsLoading(true);
 		try {
-			const data = await userService.getpaginationlist(queryPara)
+			const data = await userService.getpaginationlist(queryPara);
 			setPaginationData({
 				totalCount: data.totalCount,
-				dataList: data.dataList
-
-			})
-		} catch {
-			toast.error("get list error")
+				dataList: data.dataList,
+			});
+		} catch (error) {
+			toast.error(`get list error,${error}`);
 		}
 
-		setIsLoading(false)
-	}
+		setIsLoading(false);
+	};
 	const onDel = async (id: number) => {
-
-		setIsLoading(true)
+		setIsLoading(true);
 		if (window.confirm("are you sure to delete?")) {
-
 			try {
-				await userService.del(id)
-				toast.success("delete success")
+				await userService.del(id);
+				toast.success("delete success");
 			} catch (error) {
-				toast.error(`delete error,${error}`)
+				toast.error(`delete error,${error}`);
 			}
 
-			getList(queryStateRef.current)
+			getList(queryStateRef.current);
 		}
-		setIsLoading(false)
-
-	}
+		setIsLoading(false);
+	};
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
@@ -75,9 +70,8 @@ export default function UserPage() {
 		title: "New",
 		show: false,
 		onOk: () => {
-			getList(queryStateRef.current)
+			getList(queryStateRef.current);
 			setModalProps((prev) => ({ ...prev, show: false }));
-
 		},
 		onCancel: () => {
 			setModalProps((prev) => ({ ...prev, show: false }));
@@ -101,21 +95,23 @@ export default function UserPage() {
 					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
 						<Icon icon="solar:pen-bold-duotone" size={18} />
 					</Button>
-					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)} >
+					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
 						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
 					</Button>
 				</div>
 			),
 		},
 	];
-	const queryStateRef = useRef(queryState)
+	const queryStateRef = useRef(queryState);
 	useEffect(() => {
-		queryStateRef.current = queryState
-	}, [queryState])
+		queryStateRef.current = queryState;
+	}, [queryState]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		getList(queryState)
-	}, [])
+		getList(queryState);
+	}, []);
+
 	const [searchForm] = Form.useForm();
 	const onCreate = () => {
 		setModalProps((prev) => ({
@@ -143,61 +139,59 @@ export default function UserPage() {
 				},
 			}));
 		} catch (error) {
-			toast.error("get detail error")
+			toast.error(`get detail error,${error}`);
 		}
-
 	};
 	const onSearch = () => {
-
-		const formvalues = searchForm.getFieldsValue()
+		const formvalues = searchForm.getFieldsValue();
 		const newQueryState = {
 			...queryState,
 			pageIndex: 1,
 			queryParams: formvalues,
-		}
-		setQueryState(newQueryState)
-		getList(newQueryState)
-	}
+		};
+		setQueryState(newQueryState);
+		getList(newQueryState);
+	};
 	const onPageChange = (pagination: { current?: number; pageSize?: number }) => {
-
-		const { current, pageSize } = pagination
+		const { current, pageSize } = pagination;
 
 		const newQueryState = {
 			...queryState,
 			pageIndex: current ?? queryState.pageIndex,
 			pageSize: pageSize ?? queryState.pageSize,
-		}
-		setQueryState(newQueryState)
-		getList(newQueryState)
-
-	}
+		};
+		setQueryState(newQueryState);
+		getList(newQueryState);
+	};
 
 	const formStyle: React.CSSProperties = {
-		maxWidth: 'none',
+		maxWidth: "none",
 		padding: 24,
 	};
 
 	return (
 		<Card>
 			<CardHeader>
-				<div style={{ width: '100%' }}>User List</div>
+				<div style={{ width: "100%" }}>User List</div>
 				<div className="items-center justify-between">
 					<Form form={searchForm} name="advanced_search" style={formStyle} onFinish={onSearch}>
-						<Row gutter={24}>	<Col span={8} key={1}>
-							<Form.Item label="User Name" name="userName">
-								<Input placeholder="input User Name" />
-							</Form.Item>
-						</Col>		<Col span={8} key={2}>
+						<Row gutter={24}>
+							{" "}
+							<Col span={8} key={1}>
+								<Form.Item label="User Name" name="userName">
+									<Input placeholder="input User Name" />
+								</Form.Item>
+							</Col>{" "}
+							<Col span={8} key={2}>
 								<Form.Item label="phone Number" name="phoneNumber">
 									<Input placeholder="input phone Number" />
 								</Form.Item>
 							</Col>
 							<Col span={8} key={3}>
 								<Space size="large">
-									<Button type="submit">
-										Search
-									</Button>
-									<Button type="button"
+									<Button type="submit">Search</Button>
+									<Button
+										type="button"
 										onClick={() => {
 											searchForm.resetFields();
 										}}
@@ -205,26 +199,36 @@ export default function UserPage() {
 										Clear
 									</Button>
 
-									<Button type="button" onClick={onCreate}>New</Button>
+									<Button type="button" onClick={onCreate}>
+										New
+									</Button>
 								</Space>
-
 							</Col>
 						</Row>
-
 					</Form>
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Table<User> rowKey="id" size="small" loading={isLoading} scroll={{ x: 'max-content', y: 55 * 5 }}
+				<Table<User>
+					rowKey="id"
+					size="small"
+					loading={isLoading}
+					scroll={{ x: "max-content", y: 55 * 5 }}
 					pagination={{
-						total: paginationData.totalCount, position: ['bottomRight'], showSizeChanger: true, showQuickJumper: true,
-						showTotal: (total) => `Total ${total} items`, current: queryState.pageIndex, pageSize: queryState.pageSize
-					}} columns={columns} dataSource={paginationData.dataList} onChange={onPageChange} />
-
+						total: paginationData.totalCount,
+						position: ["bottomRight"],
+						showSizeChanger: true,
+						showQuickJumper: true,
+						showTotal: (total) => `Total ${total} items`,
+						current: queryState.pageIndex,
+						pageSize: queryState.pageSize,
+					}}
+					columns={columns}
+					dataSource={paginationData.dataList}
+					onChange={onPageChange}
+				/>
 			</CardContent>
 			<UserModal {...modalPros} />
-		</Card >
-
-
+		</Card>
 	);
 }

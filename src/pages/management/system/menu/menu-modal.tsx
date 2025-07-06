@@ -6,13 +6,13 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
-import { toast } from "sonner";
-import { ModalProps } from "@/types/types";
-import { MenusPermissionTree, MenuType, UserMenus } from "@/types/loginEntity";
 import menuService from "@/api/services/menuService";
-import { Select, TreeSelect } from "antd";
+import { MenuType, type MenusPermissionTree, type UserMenus } from "@/types/loginEntity";
+import type { Permission, Sys } from "@/types/systemEntity";
+import type { ModalProps } from "@/types/types";
 import { convertToMenuPermissionTree } from "@/utils/tree";
-import { Permission, Sys } from "@/types/systemEntity";
+import { Select, TreeSelect } from "antd";
+import { toast } from "sonner";
 
 import permissionService from "@/api/services/permissionService";
 /*
@@ -25,82 +25,76 @@ const { SHOW_PARENT } = TreeSelect;
 export function MenuModal({ title, show, formValue, onOk, onCancel, systemOptions }: ModalProps<UserMenus> & { systemOptions: Sys[] }) {
 	const isEdit = !!formValue?.id;
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
-	const [allPermissions, SetAllPermissions] = useState<Permission[]>([])
-	const [permissionListState, setPermissionListState] = useState<Permission[]>([])
+	const [allPermissions, SetAllPermissions] = useState<Permission[]>([]);
+	const [permissionListState, setPermissionListState] = useState<Permission[]>([]);
 
 	const [checkedKey, setCheckedKey] = useState<string>("");
 	const [checkedPermissionKeys, setCheckedPermissionKeys] = useState<string[]>([]);
 
-	useEffect(
-		() => {
-
-			permissionService.getlist().then(data => {
-				SetAllPermissions(data)
-			}).catch(err => toast.error("get permission list error," + err))
-
-		}, [])
+	useEffect(() => {
+		permissionService
+			.getlist()
+			.then((data) => {
+				SetAllPermissions(data);
+			})
+			.catch((err) => toast.error(`get permission list error,${err}`));
+	}, []);
 
 	const form = useForm<UserMenus>({
 		defaultValues: formValue,
 	});
 
-
 	//use unknown
 	const handleOnTreechange = (item: string) => {
-		console.log(item)
-		setCheckedKey(item)
-	}
+		console.log(item);
+		setCheckedKey(item);
+	};
 	const onSubmit = async () => {
-
-		let parentid: string = '0'
-		if (checkedKey.startsWith('m_')) {
-			parentid = checkedKey.replace('m_', '')
+		let parentid = "0";
+		if (checkedKey.startsWith("m_")) {
+			parentid = checkedKey.replace("m_", "");
 		}
 
-		if (parentid == form.getValues().id) {
-			toast.error("can not set this as its parent")
-			return
+		if (parentid === form.getValues().id) {
+			toast.error("can not set this as its parent");
+			return;
 		}
 		const model: UserMenus & { permissionIds: string[] } = {
 			...form.getValues(),
 			parentId: parentid,
 			isShow: true,
 			permissions: [],
-			permissionIds: checkedPermissionKeys
-		}
-		const id = form.getValues().id
+			permissionIds: checkedPermissionKeys,
+		};
+		const id = form.getValues().id;
 		try {
 			if (id === "0" || id === "") {
 				//new
-				await menuService.create(model)
-
+				await menuService.create(model);
 			} else {
-				await menuService.update(id, model)
+				await menuService.update(id, model);
 			}
 
-			toast.success("operate success")
-			onOk()
+			toast.success("operate success");
+			onOk();
 		} catch {
-			toast.error("operation error")
+			toast.error("operation error");
 		}
-
 	};
 
-
-
 	const handlePermissionChange = (Values: string[]) => {
+		setCheckedPermissionKeys(Values);
+	};
 
-		setCheckedPermissionKeys(Values)
-	}
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		const permissions = allPermissions.filter(t => t.systemName === formValue.systemName)
+		const permissions = allPermissions.filter((t) => t.systemName === formValue.systemName);
 
-		setPermissionListState(permissions)
+		setPermissionListState(permissions);
 		if (formValue.permissions != null && formValue.permissions.length > 0) {
-
-			setCheckedPermissionKeys(formValue.permissions.map(t => t.id))
+			setCheckedPermissionKeys(formValue.permissions.map((t) => t.id));
 		} else {
-			setCheckedPermissionKeys([])
+			setCheckedPermissionKeys([]);
 		}
 		const fetchMenus = async () => {
 			try {
@@ -108,20 +102,19 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 				const fetchedMenus = await menuService.getAllMenuList(formValue.systemName);
 				const tree = convertToMenuPermissionTree(fetchedMenus, false);
 
-
 				setMenuTree(tree);
 			} catch (error) {
 				console.error("Failed to fetch menu data:");
 			}
 		};
-		var key = 'm_' + formValue.parentId
-		if (key === 'm_0') {
-			key = 's_' + formValue.systemName
+		let key = `m_${formValue.parentId}`;
+		if (key === "m_0") {
+			key = `s_${formValue.systemName}`;
 		}
-		if (key === 'm_') {
-			key = ''
+		if (key === "m_") {
+			key = "";
 		}
-		setCheckedKey(key)
+		setCheckedKey(key);
 		fetchMenus();
 
 		form.reset(formValue);
@@ -160,18 +153,17 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 												{...field}
 												disabled={isEdit}
 												fieldNames={{
-													label: 'systemName',
-													value: 'systemName',
+													label: "systemName",
+													value: "systemName",
 												}}
 												options={systemOptions}
 												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
-												style={{ width: '100%' }}
+												style={{ width: "100%" }}
 												onChange={(value) => {
-													field.onChange(value)
-													setCheckedPermissionKeys([])
-													const permissions = allPermissions.filter(t => t.systemName === value)
-													setPermissionListState(permissions)
-
+													field.onChange(value);
+													setCheckedPermissionKeys([]);
+													const permissions = allPermissions.filter((t) => t.systemName === value);
+													setPermissionListState(permissions);
 												}}
 											/>
 										</FormControl>
@@ -223,19 +215,21 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Type</FormLabel>
 									<div className="col-span-3">
-										<FormControl>{
-											<Select
-												{...field}
-												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
-												style={{ width: '100%' }}
-												onChange={(value) => field.onChange(value)}
-												options={[
-													{ value: MenuType.Catelogue, label: 'Catelogue' },
-													{ value: MenuType.Group, label: 'Group' },
-													{ value: MenuType.Menu, label: 'Menu' },
-												]}
-											/>
-										}</FormControl>
+										<FormControl>
+											{
+												<Select
+													{...field}
+													getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
+													style={{ width: "100%" }}
+													onChange={(value) => field.onChange(value)}
+													options={[
+														{ value: MenuType.Catelogue, label: "Catelogue" },
+														{ value: MenuType.Group, label: "Group" },
+														{ value: MenuType.Menu, label: "Menu" },
+													]}
+												/>
+											}
+										</FormControl>
 									</div>
 								</FormItem>
 							)}
@@ -278,24 +272,25 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Permissions</FormLabel>
 									<div className="col-span-3">
-										<FormControl>{
-											<Select
-												mode="multiple"
-												value={checkedPermissionKeys}
-												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
-												style={{ width: '100%' }}
-												fieldNames={{
-													label: 'title',
-													value: 'id'
-												}}
-												showSearch
-												optionFilterProp="title"
-												filterSort={(optionA, optionB) =>
-													(optionA?.title ?? '').toLowerCase().localeCompare((optionB?.title ?? '').toLowerCase())}
-												onChange={handlePermissionChange}
-												options={permissionListState}
-											/>
-										}</FormControl>
+										<FormControl>
+											{
+												<Select
+													mode="multiple"
+													value={checkedPermissionKeys}
+													getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
+													style={{ width: "100%" }}
+													fieldNames={{
+														label: "title",
+														value: "id",
+													}}
+													showSearch
+													optionFilterProp="title"
+													filterSort={(optionA, optionB) => (optionA?.title ?? "").toLowerCase().localeCompare((optionB?.title ?? "").toLowerCase())}
+													onChange={handlePermissionChange}
+													options={permissionListState}
+												/>
+											}
+										</FormControl>
 									</div>
 								</FormItem>
 							)}
