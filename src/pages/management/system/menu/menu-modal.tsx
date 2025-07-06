@@ -20,13 +20,12 @@ interface MenuModalProps extends ModalProps<UserMenus> {
 	systemOptions: Sys[];
 }*/
 const { SHOW_PARENT } = TreeSelect;
-let allPermissions: Permission[] = []
+
 //只能接收一个对象
 export function MenuModal({ title, show, formValue, onOk, onCancel, systemOptions }: ModalProps<UserMenus> & { systemOptions: Sys[] }) {
 	const isEdit = !!formValue?.id;
-
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
-
+	const [allPermissions, SetAllPermissions] = useState<Permission[]>([])
 	const [permissionListState, setPermissionListState] = useState<Permission[]>([])
 
 	const [checkedKey, setCheckedKey] = useState<string>("");
@@ -36,7 +35,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 		() => {
 
 			permissionService.getlist().then(data => {
-				allPermissions = data
+				SetAllPermissions(data)
 			}).catch(err => toast.error("get permission list error," + err))
 
 		}, [])

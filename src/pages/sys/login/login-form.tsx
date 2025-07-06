@@ -64,7 +64,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 	return (
 		<div className={cn("flex flex-col gap-6", className)}>
 			<Form {...form} {...props}>
-				<form onSubmit={form.handleSubmit(handleFinish)} className="space-y-4">
+
+				<form onSubmit={form.handleSubmit(handleFinish)} className="space-y-4" >
 					<div className="flex flex-col items-center gap-2 text-center">
 						<h1 className="text-2xl font-bold">{t("sys.login.signInFormTitle")}</h1>
 						<p className="text-balance text-sm text-muted-foreground">{t("sys.login.signInFormDescription")}</p>
@@ -108,7 +109,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 								{t("sys.login.rememberMe")}
 							</label>
 						</div>
-						<Button variant="link" onClick={() => setLoginState(LoginStateEnum.RESET_PASSWORD)} size="sm">
+						<Button type="button" variant="link" onClick={() => setLoginState(LoginStateEnum.RESET_PASSWORD)} size="sm">
 							{t("sys.login.forgetPassword")}
 						</Button>
 					</div>
@@ -119,39 +120,11 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 						{t("sys.login.loginButton")}
 					</Button>
 
-					{/* 手机登录/二维码登录 */}
-					{/**		<div className="grid gap-4 sm:grid-cols-2">
-						<Button variant="outline" className="w-full" onClick={() => setLoginState(LoginStateEnum.MOBILE)}>
-							<Icon icon="uil:mobile-android" size={20} />
-							{t("sys.login.mobileSignInFormTitle")}
-						</Button>
-						<Button variant="outline" className="w-full" onClick={() => setLoginState(LoginStateEnum.QR_CODE)}>
-							<Icon icon="uil:qrcode-scan" size={20} />
-							{t("sys.login.qrSignInFormTitle")}
-						</Button>
-					</div> 
-*/}
-					{/* 其他登录方式 */}
-					{/** 
-					<div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-						<span className="relative z-10 bg-background px-2 text-muted-foreground">{t("sys.login.otherSignIn")}</span>
-					</div>
-					<div className="flex cursor-pointer justify-around text-2xl">
-						<Button variant="ghost" size="icon">
-							<Icon icon="mdi:github" size={24} />
-						</Button>
-						<Button variant="ghost" size="icon">
-							<Icon icon="mdi:wechat" size={24} />
-						</Button>
-						<Button variant="ghost" size="icon">
-							<Icon icon="ant-design:google-circle-filled" size={24} />
-						</Button>
-					</div>
-*/}
+
 					{/* 注册 */}
 					<div className="text-center text-sm">
 						{t("sys.login.noAccount")}
-						<Button variant="link" className="px-1" onClick={() => setLoginState(LoginStateEnum.REGISTER)}>
+						<Button type="button" variant="link" className="px-1" onClick={() => setLoginState(LoginStateEnum.REGISTER)}>
 							{t("sys.login.signUpFormTitle")}
 						</Button>
 					</div>

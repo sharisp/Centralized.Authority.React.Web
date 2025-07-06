@@ -112,7 +112,9 @@ export default function menuPage() {
 		{ title: "Title", dataIndex: "title" },
 		{
 			title: "Type", dataIndex: "type", render: (value: MenuType) => <p>{MenuType[value]}</p>,
-		},
+		}, ,
+		{ title: "Component", dataIndex: "component" }, ,
+		{ title: "Path", dataIndex: "path" },
 		{
 			title: "Action",
 			key: "operation",

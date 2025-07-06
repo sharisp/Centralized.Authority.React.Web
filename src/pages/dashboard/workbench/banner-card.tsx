@@ -44,15 +44,7 @@ export default function BannerCard() {
 						</a>
 					</div>
 				</div>
-				<button
-					type="button"
-					className="font-mediumtext-black m-auto flex items-center justify-center rounded-lg px-2 py-1 shadow-none md:m-0"
-					style={{ backgroundColor: themeVars.colors.palette.primary.default, color: themeVars.colors.common.white }}
-					onClick={() => window.open("https://discord.gg/fXemAXVNDa")}
-				>
-					<Icon icon="carbon:logo-discord" size={24} />
-					<span className="ml-2 font-black">Join Discord</span>
-				</button>
+
 			</div>
 
 			<div className="!md:max-w-[320px] mx-auto max-w-[270px]! flex-none items-center justify-center ">
