@@ -4,14 +4,15 @@ import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
 import Table, { type ColumnsType } from "antd/es/table";
 import { useEffect, useRef, useState } from "react";
-import type { PagenationParam } from "#/systemEntity";
+import type { PagenationParam, Sys } from "#/systemEntity";
 //import { RoleModal, type RoleModalProps } from "./role-modal";
-import { Col, Form, Input, Row, Space } from "antd";
+import { Col, Form, Input, Row, Select, Space } from "antd";
 import { toast } from "sonner";
 import { ModalProps } from "@/types/types";
 import { MenuModal } from "./menu-modal";
 import { MenuType, UserMenus } from "@/types/loginEntity";
 import menuService from "@/api/services/menuService";
+import sysService from "@/api/services/sysService";
 
 const DEFAULE_VALUE: UserMenus = {
 	id: "",
@@ -32,6 +33,8 @@ export default function menuPage() {
 
 	const [isLoading, setIsLoading] = useState(false)
 
+	const [systemListState, setSysListState] = useState<Sys[]>([])
+
 	const [paginationData, setPaginationData] = useState({
 		dataList: [] as UserMenus[],
 		totalCount: 0,
@@ -49,6 +52,9 @@ export default function menuPage() {
 
 	useEffect(() => {
 		getList(queryState)
+
+		sysService.getlist().then(data => setSysListState(data))
+			.catch(err => toast.error("get sys list error," + err))
 	}, [])
 
 	const getList = async (queryPara: PagenationParam) => {
@@ -201,7 +207,20 @@ export default function menuPage() {
 							</Form.Item>
 						</Col>		<Col span={8} key={2}>
 								<Form.Item label="SystemName" name="systemName">
-									<Input placeholder="input SystemName" />
+
+									<Select
+										placeholder="Select SystemName"
+										options={systemListState}
+										fieldNames={
+											{
+												label: 'systemName',
+												value: 'systemName',
+											}
+										}
+										allowClear
+									>
+
+									</Select>
 								</Form.Item>
 							</Col>
 							<Col span={8} key={3}>
@@ -234,7 +253,7 @@ export default function menuPage() {
 					}} columns={columns} dataSource={paginationData.dataList} onChange={onPageChange} />
 
 			</CardContent>
-			<MenuModal {...modalPros} />
+			<MenuModal systemOptions={systemListState} {...modalPros} />
 		</Card >
 
 
