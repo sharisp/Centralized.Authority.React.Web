@@ -1,5 +1,4 @@
 import Character3 from "@/assets/images/characters/character_3.png";
-import { Icon } from "@/components/icon";
 import { GLOBAL_CONFIG } from "@/global-config";
 import { useUserInfo } from "@/store/userStore";
 import { themeVars } from "@/theme/theme.css";
