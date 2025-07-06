@@ -13,7 +13,7 @@ function RegisterForm() {
 	const { loginState, backToLogin } = useLoginStateContext();
 
 	const signUpMutation = useMutation({
-		mutationFn: userService.signup,
+		mutationFn: userService.signin,
 	});
 
 	const form = useForm({

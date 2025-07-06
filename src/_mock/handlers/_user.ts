@@ -1,10 +1,9 @@
 import { UserApi } from "@/api/services/userService";
 import { ResultStuts } from "@/types/enum";
-import { convertFlatToTree } from "@/utils/tree";
 import { faker } from "@faker-js/faker";
 import { http, HttpResponse } from "msw";
 import { unknown } from "zod";
-import { DB_MENU, DB_PERMISSION, DB_ROLE, DB_ROLE_PERMISSION, DB_USER, DB_USER_ROLE } from "../assets_backup";
+import { DB_PERMISSION, DB_ROLE, DB_ROLE_PERMISSION, DB_USER, DB_USER_ROLE } from "../assets_backup";
 
 const signIn = http.post(`/api${UserApi.SignIn}`, async ({ request }) => {
 	const { username, password } = (await request.json()) as Record<string, string>;

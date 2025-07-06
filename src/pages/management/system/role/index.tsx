@@ -1,15 +1,15 @@
 import roleService from "@/api/services/roleService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
+import { Col, Form, Input, Row, Space } from "antd";
 import Table, { type ColumnsType } from "antd/es/table";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import type { PagenationParam, Role } from "#/systemEntity";
 import { RoleModal } from "./role-modal";
-import { Col, Form, Input, Row, Space } from "antd";
-import { toast } from "sonner";
-import { ModalProps } from "@/types/types";
 
 const DEFAULE_ROLE_VALUE: Role = {
 	id: 0,
@@ -59,7 +59,7 @@ export default function RolePage() {
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const onDel = async (id: Number) => {
+	const onDel = async (id: number) => {
 
 		setIsLoading(true)
 		if (window.confirm("are you sure to delete?")) {
@@ -69,7 +69,7 @@ export default function RolePage() {
 
 				toast.success("delete success")
 			} catch (error) {
-				toast.error("delete error," + error)
+				toast.error(`delete error,${error}`)
 			}
 
 			getList(queryStateRef.current)

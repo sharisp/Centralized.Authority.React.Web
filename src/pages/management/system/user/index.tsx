@@ -1,15 +1,15 @@
+import userService from "@/api/services/userService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
-import Table, { type ColumnsType } from "antd/es/table";
-import { useEffect, useRef, useState } from "react";
-import type { PagenationParam, User } from "#/systemEntity";
 //import { RoleModal, type RoleModalProps } from "./role-modal";
 import { Col, Form, Input, Row, Space } from "antd";
+import Table, { type ColumnsType } from "antd/es/table";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import userService from "@/api/services/userService";
-import { ModalProps } from "@/types/types";
+import type { PagenationParam, User } from "#/systemEntity";
 import { UserModal } from "./user-modal";
 
 const DEFAULE_VALUE: User = {
@@ -50,7 +50,7 @@ export default function UserPage() {
 
 		setIsLoading(false)
 	}
-	const onDel = async (id: Number) => {
+	const onDel = async (id: number) => {
 
 		setIsLoading(true)
 		if (window.confirm("are you sure to delete?")) {
@@ -59,7 +59,7 @@ export default function UserPage() {
 				await userService.del(id)
 				toast.success("delete success")
 			} catch (error) {
-				toast.error("delete error," + error)
+				toast.error(`delete error,${error}`)
 			}
 
 			getList(queryStateRef.current)

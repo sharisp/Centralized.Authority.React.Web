@@ -21,10 +21,10 @@ type FieldType = {
 };
 
 export default function GeneralTab() {
-	const { avatar, username, email } = useUserInfo();
+	const { userName, email } = useUserInfo();
 	const form = useForm<FieldType>({
 		defaultValues: {
-			name: username,
+			name: userName,
 			email,
 			phone: faker.phone.number(),
 			address: faker.location.county(),
@@ -42,7 +42,7 @@ export default function GeneralTab() {
 		<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<div className="flex-1">
 				<Card className="flex-col px-6! pb-10! pt-20!">
-					<UploadAvatar defaultAvatar={avatar} />
+					<UploadAvatar />
 
 					<div className="flex items-center py-6 gap-2">
 						<div>Public Profile</div>

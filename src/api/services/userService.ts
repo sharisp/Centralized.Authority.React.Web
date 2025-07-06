@@ -1,9 +1,9 @@
 import apiClient from "../apiClient";
 
+import type { BaseResponse } from "@/types/apiResponse";
 import type { UserLoginResponse } from "@/types/loginEntity";
+import type { PagenationData, PagenationParam, User } from "@/types/systemEntity";
 import type { UserInfo, UserToken } from "#/entity";
-import { PagenationData, PagenationParam, User } from "@/types/systemEntity";
-import { BaseResponse } from "@/types/apiResponse";
 
 export interface SignInReq {
 	username: string;
@@ -28,17 +28,17 @@ export interface UserCreate {
 	userName: string;
 	realName?: string;
 	email?: string;
-	roleIds: Number[];
+	roleIds: number[];
 }
 const signin = (data: SignInReq) => apiClient.post<UserLoginResponse>({ url: UserApi.SignIn, data });
 
 const logout = () => apiClient.get({ url: UserApi.Logout });
-const findById = (id: Number) => apiClient.get<UserInfo[]>({ url: `${UserApi.User}/${id}` });
+const findById = (id: number) => apiClient.get<UserInfo[]>({ url: `${UserApi.User}/${id}` });
 
-const del = (id: Number) => apiClient.delete<BaseResponse>({ url: `${UserApi.User}/${id}` });
+const del = (id: number) => apiClient.delete<BaseResponse>({ url: `${UserApi.User}/${id}` });
 
 const create = (data: UserCreate) => apiClient.post<BaseResponse>({ url: UserApi.User, data });
-const update = (id: Number, data: UserCreate) => apiClient.put<BaseResponse>({ url: `${UserApi.User}/${id}`, data });
+const update = (id: number, data: UserCreate) => apiClient.put<BaseResponse>({ url: `${UserApi.User}/${id}`, data });
 const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) => apiClient.get<PagenationData<User>>({
 	url: UserApi.RolePagination,
 	params: { pageIndex, pageSize, ...queryParams }
@@ -50,5 +50,6 @@ export default {
 	findById,
 	logout,
 	getpaginationlist,
-	del
+	del,
+
 };
