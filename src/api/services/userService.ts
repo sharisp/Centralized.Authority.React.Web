@@ -17,12 +17,12 @@ export interface SignUpReq extends SignInReq {
 export type SignInRes = UserToken & { user: UserInfo };
 
 export enum UserApi {
-	SignIn = "/identity/api/login/weblogin",
+	SignIn = "/api/login/weblogin",
 
-	Logout = "/identity/api/login/logout",
-	Refresh = "/identity/api/login/RefreshToken",
-	RolePagination = "/identity/api/user/pagination",
-	User = "/identity/api/user",
+	Logout = "/api/login/logout",
+	Refresh = "/api/login/RefreshToken",
+	RolePagination = "/api/user/pagination",
+	User = "/api/user",
 }
 export interface UserCreate {
 	userName: string;
@@ -39,10 +39,11 @@ const del = (id: number) => apiClient.delete<BaseResponse>({ url: `${UserApi.Use
 
 const create = (data: UserCreate) => apiClient.post<BaseResponse>({ url: UserApi.User, data });
 const update = (id: number, data: UserCreate) => apiClient.put<BaseResponse>({ url: `${UserApi.User}/${id}`, data });
-const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) => apiClient.get<PagenationData<User>>({
-	url: UserApi.RolePagination,
-	params: { pageIndex, pageSize, ...queryParams }
-});
+const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) =>
+	apiClient.get<PagenationData<User>>({
+		url: UserApi.RolePagination,
+		params: { pageIndex, pageSize, ...queryParams },
+	});
 export default {
 	signin,
 	create,
@@ -51,5 +52,4 @@ export default {
 	logout,
 	getpaginationlist,
 	del,
-
 };

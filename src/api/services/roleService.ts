@@ -10,11 +10,11 @@ export interface Role {
 }
 */
 enum RoleApi {
-	//	Role = "/identity/api/role",
-	Role = "/identity/api/role",
-	RolePagination = "/identity/api/role/Pagination",
-	Assign = "/identity/api/role/assign",
-	Detail = "/identity/api/role/Detail",
+	//	Role = "/api/role",
+	Role = "/api/role",
+	RolePagination = "/api/role/Pagination",
+	Assign = "/api/role/assign",
+	Detail = "/api/role/Detail",
 }
 export interface RoleCreate {
 	id: number;
@@ -28,10 +28,11 @@ const update = (data: RoleCreate) => apiClient.put<BaseResponse>({ url: `${RoleA
 const del = (id: number) => apiClient.delete<BaseResponse>({ url: `${RoleApi.Role}/${id}` });
 const getlist = () => apiClient.get<Role[]>({ url: RoleApi.Role });
 
-const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) => apiClient.get<PagenationData<Role>>({
-	url: RoleApi.RolePagination,
-	params: { pageIndex, pageSize, ...queryParams }
-});
+const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) =>
+	apiClient.get<PagenationData<Role>>({
+		url: RoleApi.RolePagination,
+		params: { pageIndex, pageSize, ...queryParams },
+	});
 const getdetail = (id: number) => apiClient.get<Role>({ url: `${RoleApi.Detail}/${id}` });
 const assign = (id: number, permissionIds: number[]) => apiClient.post<string>({ url: `${RoleApi.Assign}/${id}`, data: permissionIds });
 export default {
