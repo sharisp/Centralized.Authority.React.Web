@@ -3,7 +3,6 @@ import { t } from "@/locales/i18n";
 import userStore from "@/store/userStore";
 import type ApiResponse from "@/types/apiResponse";
 import axios, { type AxiosRequestConfig, type AxiosError, type AxiosResponse } from "axios";
-import { toast } from "sonner";
 //import { ResultStuts } from "#/enum";
 
 const axiosInstance = axios.create({
@@ -39,23 +38,18 @@ axiosInstance.interceptors.response.use(
 		console.log("error", error);
 		const { response, message } = error || {};
 		const errMsg = response?.data?.errorMsg || message || t("sys.api.errorMessage");
-		toast.error(errMsg, { position: "top-center" });
+		//toast.error(errMsg, { position: "top-center" });
 		if (response?.status === 401) {
 			userStore.getState().actions.clearUserInfoAndToken();
 		}
-		return Promise.reject(error);
+		return Promise.reject(errMsg);
 	},
 );
 
 class APIClient {
 	get<T = unknown>(config: AxiosRequestConfig): Promise<T> {
-
-		const filteredParams = Object.fromEntries(
-			Object.entries(config.params || {}).filter(
-				([_, v]) => v !== undefined && v !== null && v !== ""
-			)
-		);
-		console.log(filteredParams)
+		const filteredParams = Object.fromEntries(Object.entries(config.params || {}).filter(([_, v]) => v !== undefined && v !== null && v !== ""));
+		console.log(filteredParams);
 		return this.request<T>({
 			...config,
 			method: "GET",
