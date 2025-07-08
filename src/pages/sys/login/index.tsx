@@ -3,8 +3,10 @@ import LocalePicker from "@/components/locale-picker";
 import Logo from "@/components/logo";
 import { GLOBAL_CONFIG } from "@/global-config";
 import SettingButton from "@/layouts/components/setting-button";
-import { useUserToken } from "@/store/userStore";
-import { Navigate } from "react-router";
+import { useUserInfo, useUserToken } from "@/store/userStore";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import LoginForm from "./login-form";
 import MobileForm from "./mobile-form";
 import { LoginProvider } from "./providers/login-provider";
@@ -15,9 +17,18 @@ import ResetForm from "./reset-form";
 function LoginPage() {
 	const token = useUserToken();
 
-	if (token.accessToken) {
-		return <Navigate to={GLOBAL_CONFIG.homepage} replace />;
-	}
+	const menus = useUserInfo().menus;
+	const navigate = useNavigate();
+	useEffect(() => {
+		if (token.accessToken) {
+			if (!menus || menus.length === 0) {
+				toast.error("no permission menus for this account");
+			} else {
+				navigate(GLOBAL_CONFIG.homepage, { replace: true });
+				//	return <Navigate to={GLOBAL_CONFIG.homepage} replace />;
+			}
+		}
+	}, [token, menus, navigate]);
 
 	return (
 		<div className="relative grid min-h-svh lg:grid-cols-2 bg-background">
