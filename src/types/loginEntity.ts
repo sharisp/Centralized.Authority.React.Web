@@ -30,10 +30,10 @@ export interface UserRole {
 export interface UserMenus extends MenusMetaInfo {
 	id: string;
 	title: string;
-	path: string;
+	path?: string;
 	parentId: string;
 	//component?: string;
-	icon?: string | null;
+	icon?: string;
 	sort: number;
 	type: MenuType;
 	isShow: boolean;

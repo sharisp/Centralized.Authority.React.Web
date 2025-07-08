@@ -1,7 +1,7 @@
 import type { UserMenus } from "./loginEntity";
 
 export interface Role {
-	id: number;
+	id: string;
 	roleName: string;
 	description?: string;
 	permissions: Permission[];
@@ -9,32 +9,32 @@ export interface Role {
 }
 export interface Permission {
 	id: string;
-	title?: string;
-	systemName?: string;
+	title: string;
+	systemName: string;
 	permissionKey: string;
 }
 export interface PagenationParam {
 	pageIndex: number;
-	pageSize: number
-	queryParams: any
+	pageSize: number;
+	queryParams: any;
 }
 
 export interface PagenationData<T> {
 	totalCount: number;
-	dataList: T[]
+	dataList: T[];
 }
 
 export interface User {
-	id: number;
+	id: string;
 	userName: string;
 	password: string;
 	realName?: string;
-	email?: string;
+	email: string;
 	roles: Role[];
 }
 
 export interface Sys {
-	id: number;
+	id: string;
 	systemName: string;
 	systemCode: string;
 }

@@ -1,5 +1,6 @@
 import apiClient from "../apiClient";
 
+import type { UserFormData } from "@/schemas/userFormSchema";
 import type { BaseResponse } from "@/types/apiResponse";
 import type { UserLoginResponse } from "@/types/loginEntity";
 import type { PagenationData, PagenationParam, User } from "@/types/systemEntity";
@@ -24,21 +25,16 @@ export enum UserApi {
 	RolePagination = "/api/user/pagination",
 	User = "/api/user",
 }
-export interface UserCreate {
-	userName: string;
-	realName?: string;
-	email?: string;
-	roleIds: number[];
-}
+
 const signin = (data: SignInReq) => apiClient.post<UserLoginResponse>({ url: UserApi.SignIn, data });
 
 const logout = () => apiClient.get({ url: UserApi.Logout });
-const findById = (id: number) => apiClient.get<UserInfo[]>({ url: `${UserApi.User}/${id}` });
+const findById = (id: string) => apiClient.get<User>({ url: `${UserApi.User}/${id}` });
 
-const del = (id: number) => apiClient.delete<BaseResponse>({ url: `${UserApi.User}/${id}` });
+const del = (id: string) => apiClient.delete<BaseResponse>({ url: `${UserApi.User}/${id}` });
 
-const create = (data: UserCreate) => apiClient.post<BaseResponse>({ url: UserApi.User, data });
-const update = (id: number, data: UserCreate) => apiClient.put<BaseResponse>({ url: `${UserApi.User}/${id}`, data });
+const create = (data: UserFormData) => apiClient.post<BaseResponse>({ url: UserApi.User, data });
+const update = (id: string, data: UserFormData) => apiClient.put<BaseResponse>({ url: `${UserApi.User}/${id}`, data });
 const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) =>
 	apiClient.get<PagenationData<User>>({
 		url: UserApi.RolePagination,

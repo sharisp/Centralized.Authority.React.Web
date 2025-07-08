@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
 import menuService from "@/api/services/menuService";
-import { MenuType, type MenusPermissionTree, type UserMenus } from "@/types/loginEntity";
+import { MenuType, type MenusPermissionTree } from "@/types/loginEntity";
 import type { Permission, Sys } from "@/types/systemEntity";
 import type { ModalProps } from "@/types/types";
 import { convertToMenuPermissionTree } from "@/utils/tree";
@@ -15,6 +15,8 @@ import { Select, TreeSelect } from "antd";
 import { toast } from "sonner";
 
 import permissionService from "@/api/services/permissionService";
+import { type MenuFormData, menuFormSchema } from "@/schemas/menuSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 /*
 interface MenuModalProps extends ModalProps<UserMenus> {
 	systemOptions: Sys[];
@@ -22,14 +24,13 @@ interface MenuModalProps extends ModalProps<UserMenus> {
 const { SHOW_PARENT } = TreeSelect;
 
 //只能接收一个对象
-export function MenuModal({ title, show, formValue, onOk, onCancel, systemOptions }: ModalProps<UserMenus> & { systemOptions: Sys[] }) {
-	const isEdit = !!formValue?.id;
+export function MenuModal({ title, show, formValue, id, onOk, onCancel, systemOptions }: ModalProps<MenuFormData> & { systemOptions: Sys[] }) {
+	const isEdit = id !== "0";
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
 	const [allPermissions, SetAllPermissions] = useState<Permission[]>([]);
 	const [permissionListState, setPermissionListState] = useState<Permission[]>([]);
 
 	const [checkedKey, setCheckedKey] = useState<string>("");
-	const [checkedPermissionKeys, setCheckedPermissionKeys] = useState<string[]>([]);
 
 	useEffect(() => {
 		permissionService
@@ -40,7 +41,8 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 			.catch((err) => toast.error(`get permission list error,${err}`));
 	}, []);
 
-	const form = useForm<UserMenus>({
+	const form = useForm<MenuFormData>({
+		resolver: zodResolver(menuFormSchema),
 		defaultValues: formValue,
 	});
 
@@ -55,24 +57,20 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 			parentid = checkedKey.replace("m_", "");
 		}
 
-		if (parentid === form.getValues().id) {
+		if (parentid === id && id !== "0") {
 			toast.error("can not set this as its parent");
 			return;
 		}
-		const model: UserMenus & { permissionIds: string[] } = {
+		const model: MenuFormData = {
 			...form.getValues(),
 			parentId: parentid,
-			isShow: true,
-			permissions: [],
-			permissionIds: checkedPermissionKeys,
 		};
-		const id = form.getValues().id;
 		try {
-			if (id === "0" || id === "") {
+			if (id === "0") {
 				//new
 				await menuService.create(model);
 			} else {
-				await menuService.update(id, model);
+				await menuService.update(id.toString(), model);
 			}
 
 			toast.success("operate success");
@@ -82,20 +80,12 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 		}
 	};
 
-	const handlePermissionChange = (Values: string[]) => {
-		setCheckedPermissionKeys(Values);
-	};
-
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const permissions = allPermissions.filter((t) => t.systemName === formValue.systemName);
 
 		setPermissionListState(permissions);
-		if (formValue.permissions != null && formValue.permissions.length > 0) {
-			setCheckedPermissionKeys(formValue.permissions.map((t) => t.id));
-		} else {
-			setCheckedPermissionKeys([]);
-		}
+
 		const fetchMenus = async () => {
 			try {
 				//		const fetchedMenus = await menuService.getAllMenuList("");
@@ -131,11 +121,12 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 						<FormField
 							control={form.control}
 							name="title"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Title</FormLabel>
 									<div className="col-span-3">
 										<FormControl>{<Input {...field} />}</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -144,7 +135,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 							control={form.control}
 							name="systemName"
 							defaultValue=""
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">System Name</FormLabel>
 									<div className="col-span-3">
@@ -161,12 +152,13 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 												style={{ width: "100%" }}
 												onChange={(value) => {
 													field.onChange(value);
-													setCheckedPermissionKeys([]);
 													const permissions = allPermissions.filter((t) => t.systemName === value);
+													form.resetField("permissionIds");
 													setPermissionListState(permissions);
 												}}
 											/>
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -174,11 +166,12 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 						<FormField
 							control={form.control}
 							name="path"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Path</FormLabel>
 									<div className="col-span-3">
 										<FormControl>{<Input {...field} />}</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -186,11 +179,12 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 						<FormField
 							control={form.control}
 							name="component"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Component</FormLabel>
 									<div className="col-span-3">
 										<FormControl>{<Input {...field} />}</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -199,11 +193,12 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 						<FormField
 							control={form.control}
 							name="sort"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Sort</FormLabel>
 									<div className="col-span-3">
 										<FormControl>{<Input type="number" {...field} />}</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -211,7 +206,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 						<FormField
 							control={form.control}
 							name="type"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Type</FormLabel>
 									<div className="col-span-3">
@@ -229,6 +224,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 												/>
 											}
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -236,7 +232,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 						<FormField
 							control={form.control}
 							name="parentId"
-							render={() => (
+							render={({ fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Parent</FormLabel>
 									<div className="col-span-3">
@@ -259,6 +255,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 												onSelect={handleOnTreechange}
 											/>
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -266,8 +263,8 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 
 						<FormField
 							control={form.control}
-							name="permissions"
-							render={() => (
+							name="permissionIds"
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Permissions</FormLabel>
 									<div className="col-span-3">
@@ -275,7 +272,7 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 											{
 												<Select
 													mode="multiple"
-													value={checkedPermissionKeys}
+													value={field.value}
 													getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
 													style={{ width: "100%" }}
 													fieldNames={{
@@ -285,11 +282,12 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 													showSearch
 													optionFilterProp="title"
 													filterSort={(optionA, optionB) => (optionA?.title ?? "").toLowerCase().localeCompare((optionB?.title ?? "").toLowerCase())}
-													onChange={handlePermissionChange}
+													onChange={(value) => field.onChange(value)}
 													options={permissionListState}
 												/>
 											}
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}

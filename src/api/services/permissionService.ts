@@ -1,3 +1,4 @@
+import type { PermissionFormData } from "@/schemas/permissionSchema";
 import type { BaseResponse } from "@/types/apiResponse";
 import type { PagenationData, PagenationParam, Permission } from "@/types/systemEntity";
 import apiClient from "../apiClient";
@@ -10,8 +11,8 @@ export enum PermissionApi {
 
 const findById = (id: string) => apiClient.get<Permission>({ url: `${PermissionApi.Detail}/${id}` });
 
-const create = (data: Permission) => apiClient.post<BaseResponse>({ url: PermissionApi.Permission, data });
-const update = (id: string, data: Permission) => apiClient.put<BaseResponse>({ url: `${PermissionApi.Permission}/${id}`, data });
+const create = (data: PermissionFormData) => apiClient.post<BaseResponse>({ url: PermissionApi.Permission, data });
+const update = (id: string, data: PermissionFormData) => apiClient.put<BaseResponse>({ url: `${PermissionApi.Permission}/${id}`, data });
 const del = (id: string) => apiClient.delete<BaseResponse>({ url: `${PermissionApi.Permission}/${id}` });
 const getlist = () => apiClient.get<Permission[]>({ url: PermissionApi.Permission });
 

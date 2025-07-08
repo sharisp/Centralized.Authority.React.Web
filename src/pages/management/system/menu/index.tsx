@@ -2,6 +2,7 @@ import menuService from "@/api/services/menuService";
 import sysService from "@/api/services/sysService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { ConvertToFormData, type MenuFormData } from "@/schemas/menuSchema";
 import { MenuType, type UserMenus } from "@/types/loginEntity";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
@@ -14,8 +15,7 @@ import { toast } from "sonner";
 import type { PagenationParam, Sys } from "#/systemEntity";
 import { MenuModal } from "./menu-modal";
 
-const DEFAULE_VALUE: UserMenus = {
-	id: "",
+const DEFAULE_VALUE: MenuFormData = {
 	title: "",
 	path: "",
 	parentId: "",
@@ -23,9 +23,7 @@ const DEFAULE_VALUE: UserMenus = {
 	sort: 0,
 	component: "",
 	type: MenuType.Catelogue,
-	isShow: true,
-	description: "",
-	permissions: [],
+	permissionIds: [],
 	systemName: "",
 };
 
@@ -89,9 +87,10 @@ export default function menuPage() {
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const [modalPros, setModalProps] = useState<ModalProps<UserMenus>>({
+	const [modalPros, setModalProps] = useState<ModalProps<MenuFormData>>({
 		formValue: { ...DEFAULE_VALUE },
 		title: "New",
+		id: "0",
 		show: false,
 		onOk: () => {
 			getList(queryStateRef.current);
@@ -137,6 +136,7 @@ export default function menuPage() {
 		setModalProps((prev) => ({
 			...prev,
 			show: true,
+			id: "0",
 			title: "Create New",
 			formValue: {
 				...prev.formValue,
@@ -148,14 +148,15 @@ export default function menuPage() {
 		//	// can not use useQuery hook,this is calling in another hook
 		try {
 			const detail = await menuService.findById(formValue.id);
-
+			const newformValue = ConvertToFormData(detail);
 			setModalProps((prev) => ({
 				...prev,
 				show: true,
+				id: formValue.id,
 				title: "Edit",
 				formValue: {
 					...prev.formValue,
-					...detail,
+					...newformValue,
 				},
 			}));
 		} catch (error) {

@@ -1,6 +1,7 @@
 import permissionService from "@/api/services/permissionService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { ConvertToFormData, type PermissionFormData } from "@/schemas/permissionSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
@@ -12,8 +13,7 @@ import { toast } from "sonner";
 import type { PagenationParam, Permission } from "#/systemEntity";
 import { PermissionModal } from "./permission-modal";
 
-const DEFAULE_VALUE: Permission = {
-	id: "",
+const DEFAULE_VALUE: PermissionFormData = {
 	title: "",
 	systemName: "",
 	permissionKey: "",
@@ -60,7 +60,7 @@ export default function permissionPage() {
 		setIsLoading(true);
 		if (window.confirm("are you sure to delete?")) {
 			try {
-				await permissionService.del(id);
+				await permissionService.del(id.toString());
 				toast.success("delete success");
 			} catch (error) {
 				toast.error(`delete error,${error}`);
@@ -73,9 +73,10 @@ export default function permissionPage() {
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const [modalPros, setModalProps] = useState<ModalProps<Permission>>({
+	const [modalPros, setModalProps] = useState<ModalProps<PermissionFormData>>({
 		formValue: { ...DEFAULE_VALUE },
 		title: "New",
+		id: "0",
 		show: false,
 		onOk: () => {
 			//const latestQuery = { ...queryState };
@@ -117,6 +118,7 @@ export default function permissionPage() {
 	const onCreate = () => {
 		setModalProps((prev) => ({
 			...prev,
+			id: "0",
 			show: true,
 			title: "Create New",
 			formValue: {
@@ -125,18 +127,19 @@ export default function permissionPage() {
 			},
 		}));
 	};
-	const onEdit = async (formValue: Permission) => {
+	const onEdit = async (field: Permission) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		try {
-			const detail = await permissionService.findById(formValue.id);
-
+			const detail = await permissionService.findById(field.id);
+			const newfromValue = ConvertToFormData(detail);
 			setModalProps((prev) => ({
 				...prev,
 				show: true,
+				id: field.id,
 				title: "Edit",
 				formValue: {
 					...prev.formValue,
-					...detail,
+					...newfromValue,
 				},
 			}));
 		} catch (error) {

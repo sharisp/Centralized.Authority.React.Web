@@ -8,29 +8,25 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
 import menuService from "@/api/services/menuService";
-import roleService, { type RoleCreate } from "@/api/services/roleService";
+import roleService from "@/api/services/roleService";
+import { type RoleFormData, roleFormSchema } from "@/schemas/roleFormSchema";
 import type { MenusPermissionTree } from "@/types/loginEntity";
-import type { Role } from "@/types/systemEntity";
 import type { ModalProps } from "@/types/types";
 import { Textarea } from "@/ui/textarea";
 import { convertToMenuPermissionTree } from "@/utils/tree";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 const { SHOW_PARENT } = TreeSelect;
-export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps<Role>) {
-	//const [Menus, setMenus] = useState<UserMenus[]>([]);
-	//const [Menus1, setMenusWithPermission] = useState<UserMenus[]>([]);
+export function RoleModal({ title, show, id, formValue, onOk, onCancel }: ModalProps<RoleFormData>) {
 	const [MenuTree, setMenuTree] = useState<MenusPermissionTree[]>([]);
 
 	useEffect(() => {
 		const fetchMenus = async () => {
 			try {
-				//		const fetchedMenus = await menuService.getAllMenuList("");
 				const fetchedMenusWithPermission = await menuService.getAllMenuListWithPermission("");
 				const tree = convertToMenuPermissionTree(fetchedMenusWithPermission);
 
-				//	setMenus(fetchedMenus);
-				//	setMenusWithPermission(fetchedMenusWithPermission);
 				setMenuTree(tree);
 			} catch (error) {
 				console.error(`Failed to fetch menu data:${error}`);
@@ -39,7 +35,8 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps
 
 		fetchMenus();
 	}, []);
-	const form = useForm<Role>({
+	const form = useForm<RoleFormData>({
+		resolver: zodResolver(roleFormSchema),
 		defaultValues: formValue,
 	});
 
@@ -55,19 +52,17 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps
 				permissionIds.push(key.replace("p_", ""));
 			}
 		}
-		const role: RoleCreate = {
-			id: form.getValues().id,
-			roleName: form.getValues().roleName,
-			description: form.getValues().description,
-			menuIds: menuIds,
+		const role: RoleFormData = {
+			...form.getValues(),
 			permissionIds: permissionIds,
+			menuIds: menuIds,
 		};
 		try {
-			if (role.id === 0) {
+			if (id === "0") {
 				//new
 				await roleService.create(role);
 			} else {
-				await roleService.update(role);
+				await roleService.update(id, role);
 			}
 
 			toast.success("operate success");
@@ -90,10 +85,12 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps
 	};
 	useEffect(() => {
 		//	const flattenedPermissions = flattenTrees(formValue.menus);
-		const keys = formValue.menus.map((item) => `m_${item.id}`);
-		keys.push(...formValue.permissions.map((item) => `p_${item.id}`));
+		const keys = (formValue.menuIds ?? []).map((item) => `m_${item}`);
+		keys.push(...(formValue.permissionIds ?? []).map((item) => `p_${item}`));
 
 		//keys.push('1388473344772280320')
+		console.log(formValue);
+		console.log(keys);
 		setCheckedKeys(keys);
 	}, [formValue]);
 
@@ -112,13 +109,14 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps
 						<FormField
 							control={form.control}
 							name="roleName"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Role Name</FormLabel>
 									<div className="col-span-3">
 										<FormControl>
 											<Input {...field} />
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -126,19 +124,20 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps
 						<FormField
 							control={form.control}
 							name="description"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Description</FormLabel>
 									<div className="col-span-3">
-										<FormControl>{<Textarea {...field} />}</FormControl>
+										<FormControl>{<Textarea {...field} value={field.value ?? ""} />}</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
 						/>
 						<FormField
 							control={form.control}
-							name="menus"
-							render={() => (
+							name="menuIds"
+							render={({ fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Menus</FormLabel>
 									<div className="col-span-3">
@@ -161,6 +160,7 @@ export function RoleModal({ title, show, formValue, onOk, onCancel }: ModalProps
 												onChange={handleOnchange}
 											/>
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}

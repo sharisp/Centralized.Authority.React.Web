@@ -7,20 +7,22 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
 import roleService from "@/api/services/roleService";
-import userService, { type UserCreate } from "@/api/services/userService";
-import type { Role, User } from "@/types/systemEntity";
+import userService from "@/api/services/userService";
+import { type UserFormData, userFormSchema } from "@/schemas/userFormSchema";
+import type { Role } from "@/types/systemEntity";
 import type { ModalProps, SelectOptionProps } from "@/types/types";
 import { Select } from "antd";
 import { toast } from "sonner";
 
-export function UserModal({ title, show, formValue, onOk, onCancel }: ModalProps<User>) {
-	const [roleSelect, setRolesSelect] = useState<SelectOptionProps<number>[]>([]);
+import { zodResolver } from "@hookform/resolvers/zod";
+export function UserModal({ title, show, formValue, id, onOk, onCancel }: ModalProps<UserFormData>) {
+	const [roleSelect, setRolesSelect] = useState<SelectOptionProps<string>[]>([]);
 	useEffect(() => {
 		const fetchRoles = async () => {
 			try {
 				const roles: Role[] = await roleService.getlist();
 
-				const options: SelectOptionProps<number>[] = roles.map((t) => ({
+				const options: SelectOptionProps<string>[] = roles.map((t) => ({
 					label: t.roleName,
 					value: t.id,
 				}));
@@ -33,27 +35,16 @@ export function UserModal({ title, show, formValue, onOk, onCancel }: ModalProps
 		fetchRoles();
 	}, []);
 
-	const form = useForm<User>({
+	const form = useForm<UserFormData>({
+		resolver: zodResolver(userFormSchema),
 		defaultValues: formValue,
 	});
 
 	const onSubmit = async () => {
-		console.log(form.getValues());
-		const roles: number[] = [];
+		const model = form.getValues();
 
-		for (const key of checkedKeys) {
-			roles.push(key);
-		}
-		const model: UserCreate = {
-			//
-			userName: form.getValues().userName,
-			realName: form.getValues().realName,
-			email: form.getValues().email,
-			roleIds: checkedKeys,
-		};
-		const id = form.getValues().id;
 		try {
-			if (id === 0) {
+			if (id === "0") {
 				//new
 				await userService.create(model);
 			} else {
@@ -66,16 +57,6 @@ export function UserModal({ title, show, formValue, onOk, onCancel }: ModalProps
 			toast.error(`operate error,${error}`);
 		}
 	};
-	const [checkedKeys, setCheckedKeys] = useState<number[]>([]);
-	const handleChange = (value: number[]) => {
-		//	console.log(value)
-		setCheckedKeys(value);
-	};
-
-	useEffect(() => {
-		const keys = formValue.roles.map((item) => item.id);
-		setCheckedKeys(keys);
-	}, [formValue]);
 
 	useEffect(() => {
 		form.reset(formValue);
@@ -92,13 +73,14 @@ export function UserModal({ title, show, formValue, onOk, onCancel }: ModalProps
 						<FormField
 							control={form.control}
 							name="userName"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">User Name</FormLabel>
 									<div className="col-span-3">
 										<FormControl>
 											<Input {...field} />
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
@@ -106,32 +88,20 @@ export function UserModal({ title, show, formValue, onOk, onCancel }: ModalProps
 						<FormField
 							control={form.control}
 							name="realName"
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Real Name</FormLabel>
 									<div className="col-span-3">
-										<FormControl>{<Input {...field} />}</FormControl>
+										<FormControl>{<Input {...field} value={field.value ?? ""} />}</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}
 						/>
 						<FormField
 							control={form.control}
-							name="email"
-							render={({ field }) => (
-								<FormItem className="grid grid-cols-4 items-center gap-4">
-									<FormLabel className="text-right">Email</FormLabel>
-									<div className="col-span-3">
-										<FormControl>{<Input {...field} />}</FormControl>
-									</div>
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="roles"
-							render={() => (
+							name="roleIds"
+							render={({ field, fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">Roles</FormLabel>
 									<div className="col-span-3">
@@ -142,11 +112,26 @@ export function UserModal({ title, show, formValue, onOk, onCancel }: ModalProps
 												style={{ width: "100%" }}
 												placeholder="Please select"
 												getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
-												defaultValue={checkedKeys}
-												onChange={handleChange}
+												value={field.value ?? []}
+												onChange={(value) => field.onChange(value)}
+												onBlur={field.onBlur}
 												options={roleSelect}
 											/>
 										</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field, fieldState }) => (
+								<FormItem className="grid grid-cols-4 items-center gap-4">
+									<FormLabel className="text-right">Email</FormLabel>
+									<div className="col-span-3">
+										<FormControl>{<Input {...field} />}</FormControl>
+										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 									</div>
 								</FormItem>
 							)}

@@ -1,6 +1,7 @@
 import userService from "@/api/services/userService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { ConvertToUserFormData, type UserFormData } from "@/schemas/userFormSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
@@ -12,13 +13,11 @@ import { toast } from "sonner";
 import type { PagenationParam, User } from "#/systemEntity";
 import { UserModal } from "./user-modal";
 
-const DEFAULE_VALUE: User = {
-	id: 0,
+const DEFAULE_VALUE: UserFormData = {
 	userName: "",
 	realName: "",
-	password: "",
 	email: "",
-	roles: [],
+	roleIds: [],
 };
 
 export default function UserPage() {
@@ -48,7 +47,7 @@ export default function UserPage() {
 
 		setIsLoading(false);
 	};
-	const onDel = async (id: number) => {
+	const onDel = async (id: string) => {
 		setIsLoading(true);
 		if (window.confirm("are you sure to delete?")) {
 			try {
@@ -65,9 +64,10 @@ export default function UserPage() {
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const [modalPros, setModalProps] = useState<ModalProps<User>>({
+	const [modalPros, setModalProps] = useState<ModalProps<UserFormData>>({
 		formValue: { ...DEFAULE_VALUE },
 		title: "New",
+		id: "0",
 		show: false,
 		onOk: () => {
 			getList(queryStateRef.current);
@@ -117,6 +117,7 @@ export default function UserPage() {
 		setModalProps((prev) => ({
 			...prev,
 			show: true,
+			id: "0",
 			title: "Create New",
 			formValue: {
 				...prev.formValue,
@@ -124,18 +125,19 @@ export default function UserPage() {
 			},
 		}));
 	};
-	const onEdit = async (formValue: User) => {
+	const onEdit = async (field: User) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		try {
-			const detail = await userService.findById(formValue.id);
-
+			const detail = await userService.findById(field.id);
+			const userformValue = ConvertToUserFormData(detail);
 			setModalProps((prev) => ({
 				...prev,
 				show: true,
+				id: field.id,
 				title: "Edit",
 				formValue: {
 					...prev.formValue,
-					...detail,
+					...userformValue,
 				},
 			}));
 		} catch (error) {

@@ -1,6 +1,7 @@
 import type { PagenationData, PagenationParam } from "@/types/systemEntity";
 import apiClient from "../apiClient";
 
+import type { MenuFormData } from "@/schemas/menuSchema";
 import type { BaseResponse } from "@/types/apiResponse";
 //import type { Menu } from "#/entity";
 import type { UserMenus } from "@/types/loginEntity";
@@ -15,8 +16,8 @@ export enum MenuApi {
 
 const findById = (id: string) => apiClient.get<UserMenus>({ url: `${MenuApi.Detail}/${id}` });
 
-const create = (data: UserMenus & { permissionIds: string[] }) => apiClient.post<BaseResponse>({ url: MenuApi.Menu, data });
-const update = (id: string, data: UserMenus & { permissionIds: string[] }) => apiClient.put<BaseResponse>({ url: `${MenuApi.Menu}/${id}`, data });
+const create = (data: MenuFormData) => apiClient.post<BaseResponse>({ url: MenuApi.Menu, data });
+const update = (id: string, data: MenuFormData) => apiClient.put<BaseResponse>({ url: `${MenuApi.Menu}/${id}`, data });
 const getUserMenuList = (systemname: string) => apiClient.get<UserMenus[]>({ url: `${MenuApi.UserMenu}/${systemname}` });
 const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) =>
 	apiClient.get<PagenationData<UserMenus>>({

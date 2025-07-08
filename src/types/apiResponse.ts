@@ -6,5 +6,5 @@ export default interface ApiResponse<T = unknown> {
 }
 
 export interface BaseResponse {
-	id: number;
+	id: string;
 }

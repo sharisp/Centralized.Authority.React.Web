@@ -1,6 +1,7 @@
 import roleService from "@/api/services/roleService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { ConvertToFormData, type RoleFormData } from "@/schemas/roleFormSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
@@ -11,12 +12,11 @@ import { toast } from "sonner";
 import type { PagenationParam, Role } from "#/systemEntity";
 import { RoleModal } from "./role-modal";
 
-const DEFAULE_ROLE_VALUE: Role = {
-	id: 0,
+const DEFAULE_ROLE_VALUE: RoleFormData = {
 	roleName: "",
 	description: "",
-	menus: [],
-	permissions: [],
+	menuIds: [],
+	permissionIds: [],
 };
 export default function RolePage() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +57,7 @@ export default function RolePage() {
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const onDel = async (id: number) => {
+	const onDel = async (id: string) => {
 		setIsLoading(true);
 		if (window.confirm("are you sure to delete?")) {
 			try {
@@ -72,9 +72,10 @@ export default function RolePage() {
 		}
 		setIsLoading(false);
 	};
-	const [roleModalPros, setRoleModalProps] = useState<ModalProps<Role>>({
+	const [roleModalPros, setRoleModalProps] = useState<ModalProps<RoleFormData>>({
 		formValue: { ...DEFAULE_ROLE_VALUE },
 		title: "New",
+		id: "0",
 		show: false,
 		onOk: () => {
 			getList(queryStateRef.current);
@@ -114,6 +115,7 @@ export default function RolePage() {
 		setRoleModalProps((prev) => ({
 			...prev,
 			show: true,
+			id: "0",
 			title: "Create New",
 			formValue: {
 				...prev.formValue,
@@ -124,14 +126,15 @@ export default function RolePage() {
 	const onEdit = async (formValue: Role) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		const detail = await roleService.getdetail(formValue.id);
-		console.log(detail);
+		const newformValue = ConvertToFormData(detail);
 		setRoleModalProps((prev) => ({
 			...prev,
 			show: true,
+			id: formValue.id,
 			title: "Edit",
 			formValue: {
 				...prev.formValue,
-				...detail,
+				...newformValue,
 			},
 		}));
 	};
