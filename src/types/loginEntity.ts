@@ -43,7 +43,6 @@ export interface UserMenus extends MenusMetaInfo {
 	systemName: string;
 }
 export enum MenuType {
-	Group = 0,
 	Catelogue = 1,
 	Menu = 2,
 	Permission = 3,
@@ -61,7 +60,6 @@ export type MenusMetaInfo = Partial<Pick<NavItemDataProps, "path" | "icon" | "ca
 	externalLink?: URL;
 	component?: string;
 };
-
 
 export type MenusPermissionTree = {
 	id: string;

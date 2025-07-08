@@ -50,13 +50,6 @@ export const convertToRoute = (items: MenusTree[], parent?: MenusTree): RouteObj
 	const routes: RouteObject[] = [];
 
 	const processItem = (item: MenusTree) => {
-		// if group, process children
-		if (item.type === MenuType.Group) {
-			for (const child of item.children || []) {
-				processItem(child);
-			}
-		}
-
 		// if catalogue, process children
 		if (item.type === MenuType.Catelogue) {
 			const children = item.children || [];

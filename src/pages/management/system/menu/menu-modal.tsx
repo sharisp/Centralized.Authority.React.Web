@@ -77,8 +77,8 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 
 			toast.success("operate success");
 			onOk();
-		} catch {
-			toast.error("operation error");
+		} catch (error) {
+			toast.error(`operation error,${error}`);
 		}
 	};
 
@@ -224,7 +224,6 @@ export function MenuModal({ title, show, formValue, onOk, onCancel, systemOption
 													onChange={(value) => field.onChange(value)}
 													options={[
 														{ value: MenuType.Catelogue, label: "Catelogue" },
-														{ value: MenuType.Group, label: "Group" },
 														{ value: MenuType.Menu, label: "Menu" },
 													]}
 												/>
