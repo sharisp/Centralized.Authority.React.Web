@@ -18,12 +18,12 @@ export interface SignUpReq extends SignInReq {
 export type SignInRes = UserToken & { user: UserInfo };
 
 export enum UserApi {
-	SignIn = "/api/login/weblogin",
+	SignIn = "/identity/api/login/weblogin",
 
-	Logout = "/api/login/logout",
-	Refresh = "/api/login/RefreshToken",
-	RolePagination = "/api/user/pagination",
-	User = "/api/user",
+	Logout = "/identity/api/login/logout",
+	Refresh = "/identity/api/login/RefreshToken",
+	RolePagination = "/identity/api/user/pagination",
+	User = "/identity/api/user",
 }
 
 const signin = (data: SignInReq) => apiClient.post<UserLoginResponse>({ url: UserApi.SignIn, data });

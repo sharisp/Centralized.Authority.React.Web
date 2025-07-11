@@ -7,11 +7,11 @@ import type { BaseResponse } from "@/types/apiResponse";
 import type { UserMenus } from "@/types/loginEntity";
 
 export enum MenuApi {
-	UserMenu = "/api/User/ListMenus",
-	Menu = "/api/Menu",
-	Pagination = "/api/Menu/Pagination",
-	AllMenuWithPermission = "/api/Menu/ListWithPermission",
-	Detail = "/api/Menu/detail",
+	UserMenu = "/identity/api/User/ListMenus",
+	Menu = "/identity/api/Menu",
+	Pagination = "/identity/api/Menu/Pagination",
+	AllMenuWithPermission = "/identity/api/Menu/ListWithPermission",
+	Detail = "/identity/api/Menu/detail",
 }
 
 const findById = (id: string) => apiClient.get<UserMenus>({ url: `${MenuApi.Detail}/${id}` });

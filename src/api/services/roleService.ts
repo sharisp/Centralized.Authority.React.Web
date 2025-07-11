@@ -12,10 +12,10 @@ export interface Role {
 */
 enum RoleApi {
 	//	Role = "/api/role",
-	Role = "/api/role",
-	RolePagination = "/api/role/Pagination",
-	Assign = "/api/role/assign",
-	Detail = "/api/role/Detail",
+	Role = "/identity/api/role",
+	RolePagination = "/identity/api/role/Pagination",
+	Assign = "/identity/api/role/assign",
+	Detail = "/identity/api/role/Detail",
 }
 export interface RoleCreate {
 	id: string;

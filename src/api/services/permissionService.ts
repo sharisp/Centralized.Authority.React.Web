@@ -4,9 +4,9 @@ import type { PagenationData, PagenationParam, Permission } from "@/types/system
 import apiClient from "../apiClient";
 
 export enum PermissionApi {
-	Permission = "/api/Permission",
-	Pagination = "/api/Permission/Pagination",
-	Detail = "/api/Permission/Detail",
+	Permission = "/identity/api/Permission",
+	Pagination = "/identity/api/Permission/Pagination",
+	Detail = "/identity/api/Permission/Detail",
 }
 
 const findById = (id: string) => apiClient.get<Permission>({ url: `${PermissionApi.Detail}/${id}` });

@@ -4,6 +4,7 @@ import Logo from "@/components/logo";
 import { GLOBAL_CONFIG } from "@/global-config";
 import SettingButton from "@/layouts/components/setting-button";
 import { useUserInfo, useUserToken } from "@/store/userStore";
+import { MenuType } from "@/types/loginEntity";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -24,7 +25,19 @@ function LoginPage() {
 			if (!menus || menus.length === 0) {
 				toast.error("no permission menus for this account");
 			} else {
-				navigate(GLOBAL_CONFIG.homepage, { replace: true });
+				if (menus.filter((t) => t.path?.toLowerCase() === GLOBAL_CONFIG.homepage.toLowerCase()).length > 0) {
+					navigate(GLOBAL_CONFIG.homepage, { replace: true });
+				} else {
+					//	toast.error("no permission menus for the homepage");
+					for (const element of menus) {
+						if (element.path?.toLowerCase() !== GLOBAL_CONFIG.homepage.toLowerCase()) {
+							if (element.type === MenuType.Menu && element.path) {
+								navigate(element.path, { replace: true });
+								break;
+							}
+						}
+					}
+				}
 				//	return <Navigate to={GLOBAL_CONFIG.homepage} replace />;
 			}
 		}
