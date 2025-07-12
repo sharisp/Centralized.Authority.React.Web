@@ -1,29 +1,34 @@
+import albumService from "@/api/services/albumService";
+import categoryService from "@/api/services/categoryService";
 import kindService from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
-import { ConvertToFormData, type KindFormData } from "@/schemas/kindSchema";
-import type { Kind } from "@/types/listenEntity";
+import { type AlbumFormData, ConvertToFormData } from "@/schemas/albumSchema";
+import type { Album, Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
 //import { RoleModal, type RoleModalProps } from "./role-modal";
-import { Col, Form, Input, Row, Space } from "antd";
+import { Col, Form, Input, Row, Select, Space } from "antd";
 import Table, { type ColumnsType } from "antd/es/table";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { PagenationParam } from "#/systemEntity";
-import { KindModal } from "./kind-modal";
+import { AlbumModal } from "./album-modal";
 
-const DEFAULE_VALUE: KindFormData = {
+const DEFAULE_VALUE: AlbumFormData = {
 	title: "",
 	coverImgUrl: "",
 	sequenceNumber: "1",
+	categoryId: "",
 };
 
-export default function KindPage() {
+export default function albumPage() {
+	const [kinds, setKinds] = useState<Kind[]>([]);
+	const [categories, setCategories] = useState<Category[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [paginationData, setPaginationData] = useState({
-		dataList: [] as Kind[],
+		dataList: [] as Album[],
 		totalCount: 0,
 	});
 	const [queryState, setQueryState] = useState<PagenationParam>({
@@ -39,13 +44,18 @@ export default function KindPage() {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
+		kindService
+			.getlist()
+			.then((data) => setKinds(data))
+			.catch((error) => toast.error(error));
+		//categoryService.getlist().then(data => setCategories(data)).catch(error => toast.error(error))
 		getList(queryState);
 	}, []);
 
 	const getList = async (queryPara: PagenationParam) => {
 		setIsLoading(true);
 		try {
-			const data = await kindService.getpaginationlist(queryPara);
+			const data = await albumService.getpaginationlist(queryPara);
 			setPaginationData({
 				totalCount: data.totalCount,
 				dataList: data.dataList,
@@ -60,7 +70,7 @@ export default function KindPage() {
 		setIsLoading(true);
 		if (window.confirm("are you sure to delete?")) {
 			try {
-				await kindService.del(id.toString());
+				await albumService.del(id.toString());
 				toast.success("delete success");
 			} catch (error) {
 				toast.error(`delete error,${error}`);
@@ -73,7 +83,7 @@ export default function KindPage() {
 
 	//const { data: roles = [], isLoading } = useQuery({ queryKey: ["roles"], queryFn: () => roleService.getlist() });
 
-	const [modalPros, setModalProps] = useState<ModalProps<KindFormData>>({
+	const [modalPros, setModalProps] = useState<ModalProps<AlbumFormData>>({
 		formValue: { ...DEFAULE_VALUE },
 		title: "New",
 		id: "0",
@@ -88,7 +98,7 @@ export default function KindPage() {
 			setModalProps((prev) => ({ ...prev, show: false }));
 		},
 	});
-	const columns: ColumnsType<Kind> = [
+	const columns: ColumnsType<Album> = [
 		{ title: "Title", dataIndex: "title" },
 		{ title: "sequenceNumber", dataIndex: "sequenceNumber" },
 		{ title: "coverImgUrl", dataIndex: "coverImgUrl" },
@@ -125,10 +135,10 @@ export default function KindPage() {
 			},
 		}));
 	};
-	const onEdit = async (field: Kind) => {
+	const onEdit = async (field: Album) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		try {
-			const detail = await kindService.findById(field.id);
+			const detail = await albumService.findById(field.id);
 			const newfromValue = ConvertToFormData(detail);
 			setModalProps((prev) => ({
 				...prev,
@@ -178,18 +188,58 @@ export default function KindPage() {
 	return (
 		<Card>
 			<CardHeader>
-				<div style={{ width: "100%" }}>Kind List</div>
+				<div style={{ width: "100%" }}>Album List</div>
 				<div className="items-center justify-between">
 					<Form form={searchForm} name="advanced_search" style={formStyle} onFinish={onSearch}>
 						<Row gutter={24}>
 							{" "}
-							<Col span={8} key={0}>
+							<Col span={6} key={0}>
 								<Form.Item label="Title" name="title">
 									<Input placeholder="input title" />
 								</Form.Item>
 							</Col>{" "}
-							<Col span={8} key={1} />{" "}
-							<Col span={8} key={3}>
+							<Col span={6} key={1}>
+								<Form.Item label="Kind" name="kindId">
+									<Select
+										placeholder="Select Kind"
+										options={kinds}
+										fieldNames={{
+											label: "title",
+											value: "id",
+										}}
+										onChange={(id) => {
+											if (id) {
+												setCategories([]);
+												searchForm.resetFields(["categoryId"]);
+												categoryService
+													.findByKindId(id)
+													.then((data) => {
+														setCategories(data);
+														if (data.length > 0) {
+															searchForm.setFieldValue("categoryId", data[0].id);
+														}
+													})
+													.catch((error) => toast.error(error));
+											}
+										}}
+										allowClear
+									/>
+								</Form.Item>
+							</Col>{" "}
+							<Col span={6} key={2}>
+								<Form.Item label="Category" name="categoryId">
+									<Select
+										placeholder="Select Category"
+										options={categories}
+										fieldNames={{
+											label: "title",
+											value: "id",
+										}}
+										allowClear
+									/>
+								</Form.Item>
+							</Col>{" "}
+							<Col span={6} key={3}>
 								<Space size="large">
 									<Button type="submit">Search</Button>
 									<Button
@@ -211,7 +261,7 @@ export default function KindPage() {
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Table<Kind>
+				<Table<Album>
 					rowKey="id"
 					size="small"
 					loading={isLoading}
@@ -230,7 +280,7 @@ export default function KindPage() {
 					onChange={onPageChange}
 				/>
 			</CardContent>
-			<KindModal {...modalPros} />
+			<AlbumModal {...modalPros} kinds={kinds} />
 		</Card>
 	);
 }
