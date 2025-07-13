@@ -1,22 +1,23 @@
 import type { BaseResponse } from "@/types/apiResponse";
 
-import type { AlbumFormData } from "@/schemas/albumSchema";
-import type { Album } from "@/types/listenEntity";
+import type { EpisodeFormData } from "@/schemas/episodeSchema";
+import type { Album, Episode } from "@/types/listenEntity";
 import type { PagenationData, PagenationParam } from "@/types/systemEntity";
 import apiClient from "../apiClient";
 
 enum Api {
-	Base = "/listenadmin/api/album",
-	Pagination = "/listenadmin/api/album/Pagination",
-	List = "/listenadmin/api/album/List",
+	Base = "/listenadmin/api/episode",
+	Pagination = "/listenadmin/api/episode/Pagination",
+	List = "/listenadmin/api/episode/List",
+	findByAlbum = "/listenadmin/api/episode/ListByAlbum",
 }
 
-const findById = (id: string) => apiClient.get<Album>({ url: `${Api.Base}/${id}` });
-
-const create = (data: AlbumFormData) => apiClient.post<BaseResponse>({ url: Api.Base, data });
-const update = (id: string, data: AlbumFormData) => apiClient.put<BaseResponse>({ url: `${Api.Base}/${id}`, data });
+const findById = (id: string) => apiClient.get<Episode>({ url: `${Api.Base}/${id}` });
+const findByAlbum = (albumId: string) => apiClient.get<Episode[]>({ url: `${Api.findByAlbum}/${albumId}` });
+const create = (data: EpisodeFormData) => apiClient.post<BaseResponse>({ url: Api.Base, data });
+const update = (id: string, data: EpisodeFormData) => apiClient.put<BaseResponse>({ url: `${Api.Base}/${id}`, data });
 const del = (id: string) => apiClient.delete<BaseResponse>({ url: `${Api.Base}/${id}` });
-const getlist = () => apiClient.get<Album[]>({ url: Api.List });
+const getlist = () => apiClient.get<Episode[]>({ url: Api.List });
 
 const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) =>
 	apiClient.get<PagenationData<Album>>({
@@ -33,4 +34,5 @@ export default {
 	getlist,
 	getdetail,
 	getpaginationlist,
+	findByAlbum,
 };

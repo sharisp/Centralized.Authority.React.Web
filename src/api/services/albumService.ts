@@ -9,10 +9,11 @@ enum Api {
 	Base = "/listenadmin/api/album",
 	Pagination = "/listenadmin/api/album/Pagination",
 	List = "/listenadmin/api/album/List",
+	findByCatagoryId = "/listenadmin/api/album/ListByCatagory",
 }
 
 const findById = (id: string) => apiClient.get<Album>({ url: `${Api.Base}/${id}` });
-
+const findByCatagoryId = (categoryId: string) => apiClient.get<Album[]>({ url: `${Api.findByCatagoryId}/${categoryId}` });
 const create = (data: AlbumFormData) => apiClient.post<BaseResponse>({ url: Api.Base, data });
 const update = (id: string, data: AlbumFormData) => apiClient.put<BaseResponse>({ url: `${Api.Base}/${id}`, data });
 const del = (id: string) => apiClient.delete<BaseResponse>({ url: `${Api.Base}/${id}` });
@@ -33,4 +34,5 @@ export default {
 	getlist,
 	getdetail,
 	getpaginationlist,
+	findByCatagoryId,
 };

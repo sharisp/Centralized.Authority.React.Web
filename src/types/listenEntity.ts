@@ -14,4 +14,7 @@ export interface Album extends Kind {
 }
 export interface Episode extends Kind {
 	albumId: string;
+	subtitleType: string;
+	subtitleContent: string;
+	audioUrl: string;
 }

@@ -90,7 +90,7 @@ export default function KindPage() {
 	});
 	const columns: ColumnsType<Kind> = [
 		{ title: "Title", dataIndex: "title" },
-		{ title: "sequenceNumber", dataIndex: "sequenceNumber" },
+		{ title: "sequenceNumber", dataIndex: "sequenceNumber", width: 150 },
 		{ title: "coverImgUrl", dataIndex: "coverImgUrl" },
 		// { title: "description", dataIndex: "description" },
 

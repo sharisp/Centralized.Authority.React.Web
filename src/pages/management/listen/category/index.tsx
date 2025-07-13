@@ -97,7 +97,7 @@ export default function categoryPage() {
 	});
 	const columns: ColumnsType<Category> = [
 		{ title: "Title", dataIndex: "title" },
-		{ title: "sequenceNumber", dataIndex: "sequenceNumber" },
+		{ title: "sequenceNumber", dataIndex: "sequenceNumber", width: 150 },
 		{ title: "coverImgUrl", dataIndex: "coverImgUrl" },
 		// { title: "description", dataIndex: "description" },
 
