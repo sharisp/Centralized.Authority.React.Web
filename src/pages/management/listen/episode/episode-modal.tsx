@@ -47,6 +47,9 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 				formData.append("file", selectedFile);
 				model.audioUrl = await fileService.upload(formData);
 			}
+			if (!model.subtitleType) {
+				model.subtitleType = "json";
+			}
 			if (id === "0") {
 				//new
 				await episodeService.create(model);

@@ -7,7 +7,7 @@ export const EpisodeFormSchema = z.object({
 	sequenceNumber: z.string().nonempty("sequenceNumber required"),
 	coverImgUrl: z.string().url().optional(),
 	albumId: z.string().nonempty("albumId required"),
-	subtitleType: z.string().nonempty("subtitleType required"),
+	subtitleType: z.string().optional(),
 	subtitleContent: z.string().nonempty("subtitleContent required"),
 	audioUrl: z.string(), //.nonempty("audioUrl required"),
 });
