@@ -17,6 +17,7 @@ import type { ModalProps } from "@/types/types";
 import { Textarea } from "@/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "antd";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds }: ModalProps<EpisodeFormData> & { kinds: Kind[] }) {
@@ -25,7 +26,7 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [categoryId, setCategoryId] = useState<string>("");
-
+	const [isloading, setloading] = useState(false);
 	const [albums, setAlbums] = useState<Album[]>([]);
 	const form = useForm<EpisodeFormData>({
 		resolver: zodResolver(EpisodeFormSchema),
@@ -33,10 +34,12 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 	});
 
 	const onSubmit = async () => {
+		setloading(true);
 		const model: EpisodeFormData = form.getValues();
 		if (isCreate) {
 			if (selectedFile === null) {
 				toast.error("please select file");
+				setloading(false);
 				return;
 			}
 		}
@@ -61,6 +64,8 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 			onOk();
 		} catch (error) {
 			toast.error(`operation error,${error}`);
+		} finally {
+			setloading(false);
 		}
 	};
 
@@ -288,8 +293,10 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 						onClick={() => {
 							form.handleSubmit(onSubmit)();
 						}}
+						disabled={isloading}
 					>
-						Save
+						{isloading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+						{isloading ? "Submitting..." : "Submit"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

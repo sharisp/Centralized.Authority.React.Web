@@ -18,3 +18,8 @@ export interface Episode extends Kind {
 	subtitleContent: string;
 	audioUrl: string;
 }
+export interface Subtitle {
+	StartTime: string;
+	EndTime: string;
+	Content: string;
+}
