@@ -98,7 +98,25 @@ export default function categoryPage() {
 	const columns: ColumnsType<Category> = [
 		{ title: "Title", dataIndex: "title" },
 		{ title: "sequenceNumber", dataIndex: "sequenceNumber", width: 150 },
-		{ title: "coverImgUrl", dataIndex: "coverImgUrl" },
+		{
+			title: "coverImgUrl",
+			dataIndex: "coverImgUrl",
+			render: (field) => (
+				<img
+					alt="img"
+					src={field}
+					style={{
+						width: 50,
+						height: 50,
+					}}
+				/>
+			),
+		},
+		{
+			title: "isShow",
+			dataIndex: "isShow",
+			render: (field) => <span>{field ? "yes" : "no"}</span>,
+		},
 		// { title: "description", dataIndex: "description" },
 
 		{
