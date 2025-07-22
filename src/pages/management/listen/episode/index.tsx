@@ -1,8 +1,9 @@
 import albumService from "@/api/services/albumService";
 import categoryService from "@/api/services/categoryService";
-import episodeService from "@/api/services/episodeService";
+import episodeService, { Api } from "@/api/services/episodeService";
 import kindService from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
+import { ConfirmOperate } from "@/mycomponent/ConfirmOperate";
 import { ConvertToFormData, type EpisodeFormData } from "@/schemas/episodeSchema";
 import type { Album, Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -118,7 +119,11 @@ export default function episodePage() {
 	const columns: ColumnsType<Album> = [
 		{ title: "Title", dataIndex: "title" },
 		{ title: "sequenceNumber", dataIndex: "sequenceNumber", width: 150 },
-		{ title: "coverImgUrl", dataIndex: "coverImgUrl" },
+		{
+			title: "isShow",
+			dataIndex: "isShow",
+			render: (field) => <span>{field ? "yes" : "no"}</span>,
+		},
 		// { title: "description", dataIndex: "description" },
 
 		{
@@ -134,6 +139,26 @@ export default function episodePage() {
 					<Button variant="ghost" size="icon" onClick={() => onview(record)}>
 						<Icon icon="mingcute:audio-tape-fill" size={18} />
 					</Button>
+
+					<ConfirmOperate
+						hide={record.isShow}
+						id={record.id}
+						title="are you sure to hide this?"
+						url={Api.show}
+						callback={() => getList(queryStateRef.current)}
+						setloading={setIsLoading}
+						icon="ic:baseline-visibility"
+					/>
+
+					<ConfirmOperate
+						hide={!record.isShow}
+						id={record.id}
+						title="are you sure to show this?"
+						url={Api.hide}
+						callback={() => getList(queryStateRef.current)}
+						setloading={setIsLoading}
+						icon="ic:baseline-visibility-off"
+					/>
 					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
 						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
 					</Button>

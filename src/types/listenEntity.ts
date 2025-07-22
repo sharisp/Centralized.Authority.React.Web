@@ -5,6 +5,7 @@ export interface Kind {
 	coverImgUrl?: URL;
 	createDateTime: Date;
 	description?: string;
+	isShow: boolean;
 }
 export interface Category extends Kind {
 	kindId: string;

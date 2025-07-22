@@ -5,11 +5,13 @@ import type { Album, Episode } from "@/types/listenEntity";
 import type { PagenationData, PagenationParam } from "@/types/systemEntity";
 import apiClient from "../apiClient";
 
-enum Api {
+export enum Api {
 	Base = "/listenadmin/api/episode",
 	Pagination = "/listenadmin/api/episode/Pagination",
 	List = "/listenadmin/api/episode/List",
 	findByAlbum = "/listenadmin/api/episode/ListByAlbum",
+	show = "/listenadmin/api/episode/show",
+	hide = "/listenadmin/api/episode/hide",
 }
 
 const findById = (id: string) => apiClient.get<Episode>({ url: `${Api.Base}/${id}` });
