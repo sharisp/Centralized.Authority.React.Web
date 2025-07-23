@@ -1,6 +1,7 @@
-import categoryService from "@/api/services/categoryService";
+import categoryService, { Api } from "@/api/services/categoryService";
 import kindService from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
+import { ConfirmOperate } from "@/mycomponent/ConfirmOperate";
 import { type CategoryFormData, ConvertToFormData } from "@/schemas/categorySchema";
 import type { Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -129,6 +130,25 @@ export default function categoryPage() {
 					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
 						<Icon icon="solar:pen-bold-duotone" size={18} />
 					</Button>
+					<ConfirmOperate
+						hide={record.isShow}
+						id={record.id}
+						title="are you sure to show this?"
+						url={Api.show}
+						callback={() => getList(queryStateRef.current)}
+						setloading={setIsLoading}
+						icon="ic:baseline-visibility"
+					/>
+
+					<ConfirmOperate
+						hide={!record.isShow}
+						id={record.id}
+						title="are you sure to hide this?"
+						url={Api.hide}
+						callback={() => getList(queryStateRef.current)}
+						setloading={setIsLoading}
+						icon="ic:baseline-visibility-off"
+					/>
 					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
 						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
 					</Button>

@@ -5,11 +5,13 @@ import type { Category } from "@/types/listenEntity";
 import type { PagenationData, PagenationParam } from "@/types/systemEntity";
 import apiClient from "../apiClient";
 
-enum Api {
+export enum Api {
 	Base = "/listenadmin/api/Category",
 	Pagination = "/listenadmin/api/Category/Pagination",
 	findByKindId = "/listenadmin/api/Category/ListByKind",
 	List = "/listenadmin/api/Category/List",
+	show = "/listenadmin/api/Category/show",
+	hide = "/listenadmin/api/Category/hide",
 }
 
 const findById = (id: string) => apiClient.get<Category>({ url: `${Api.Base}/${id}` });
