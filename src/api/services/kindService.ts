@@ -4,10 +4,12 @@ import type { Kind } from "@/types/listenEntity";
 import type { PagenationData, PagenationParam } from "@/types/systemEntity";
 import apiClient from "../apiClient";
 
-enum Api {
+export enum Api {
 	Base = "/listenadmin/api/Kind",
 	Pagination = "/listenadmin/api/Kind/Pagination",
 	List = "/listenadmin/api/Kind/List",
+	show = "/listenadmin/api/Kind/show",
+	hide = "/listenadmin/api/Kind/hide",
 }
 
 const findById = (id: string) => apiClient.get<Kind>({ url: `${Api.Base}/${id}` });

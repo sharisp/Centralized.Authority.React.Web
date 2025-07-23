@@ -143,7 +143,7 @@ export default function episodePage() {
 					<ConfirmOperate
 						hide={record.isShow}
 						id={record.id}
-						title="are you sure to hide this?"
+						title="are you sure to show this?"
 						url={Api.show}
 						callback={() => getList(queryStateRef.current)}
 						setloading={setIsLoading}
@@ -153,7 +153,7 @@ export default function episodePage() {
 					<ConfirmOperate
 						hide={!record.isShow}
 						id={record.id}
-						title="are you sure to show this?"
+						title="are you sure to hide this?"
 						url={Api.hide}
 						callback={() => getList(queryStateRef.current)}
 						setloading={setIsLoading}
