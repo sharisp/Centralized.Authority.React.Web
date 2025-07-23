@@ -139,7 +139,7 @@ export function RoleModal({ title, show, id, formValue, onOk, onCancel }: ModalP
 							name="menuIds"
 							render={({ fieldState }) => (
 								<FormItem className="grid grid-cols-4 items-center gap-4">
-									<FormLabel className="text-right">Menus</FormLabel>
+									<FormLabel className="text-right">Permissions</FormLabel>
 									<div className="col-span-3">
 										<FormControl>
 											<TreeSelect
