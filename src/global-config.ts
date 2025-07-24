@@ -11,7 +11,7 @@ export type GlobalConfig = {
 };
 
 export const GLOBAL_CONFIG: GlobalConfig = {
-	appName: "Identity Management",
+	appName: import.meta.env.VITE_APP_NAME,
 	systemName: import.meta.env.VITE_APP_SystemName,
 	appVersion: packageJson.version,
 	homepage: import.meta.env.VITE_APP_HOMEPAGE || "/",
