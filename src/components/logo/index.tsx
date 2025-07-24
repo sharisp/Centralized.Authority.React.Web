@@ -12,7 +12,7 @@ function Logo({ size = 50, className }: Props) {
 
 	return (
 		<NavLink to="/" className={cn(className)}>
-			<Icon icon="solar:code-square-bold" color={themeTokens.color.palette.primary.default} size={size} />
+			<Icon icon="hugeicons:headset-connected" color={themeTokens.color.palette.primary.default} size={size} />
 		</NavLink>
 	);
 }

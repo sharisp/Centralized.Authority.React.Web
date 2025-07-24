@@ -1,9 +1,9 @@
 {
-	"name": "slash-admin",
+	"name": "listen-admin",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"homepage": "https://github.com/d3george/slash-admin",
+	"homepage": "https://github.com/sharisp/Centralized.Authority.React.Web",
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
