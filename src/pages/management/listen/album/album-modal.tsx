@@ -9,6 +9,8 @@ import { Input } from "@/ui/input";
 import albumService from "@/api/services/albumService";
 
 import categoryService from "@/api/services/categoryService";
+
+import { FileUpload } from "@/mycomponent/FileUpload";
 import { type AlbumFormData, AlbumFormSchema } from "@/schemas/albumSchema";
 import type { Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -145,8 +147,15 @@ export function AlbumModal({ title, show, id, formValue, onOk, onCancel, kinds }
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">coverImgUrl</FormLabel>
 									<div className="col-span-3">
-										<FormControl>{<Input {...field} />}</FormControl>
+										<FileUpload
+											fileTypes={["image/jpeg", "image/png"]}
+											uploadSucessFunc={(url: string) => {
+												form.setValue("coverImgUrl", url);
+											}}
+										/>
+										<FormControl>{<Input hidden={true} {...field} />}</FormControl>
 										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
+										<img alt="img" hidden={!field.value} className="h-20" src={field.value} />
 									</div>
 								</FormItem>
 							)}

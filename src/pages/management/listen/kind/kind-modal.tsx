@@ -7,9 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 
 import kindService from "@/api/services/kindService";
+import { FileUpload } from "@/mycomponent/FileUpload";
 import { type KindFormData, kindFormSchema } from "@/schemas/kindSchema";
-
-import { ImgUpload } from "@/mycomponent/ImgUpload";
 import type { ModalProps } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -88,7 +87,7 @@ export function KindModal({ title, show, id, formValue, onOk, onCancel }: ModalP
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">coverImgUrl</FormLabel>
 									<div className="col-span-3">
-										<ImgUpload uploadSucessFunc={onUploadSuccess} />
+										<FileUpload fileTypes={["image/jpeg", "image/png"]} uploadSucessFunc={onUploadSuccess} />
 										<FormControl>{<Input hidden={true} {...field} />}</FormControl>
 										{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 										<img alt="img" hidden={!field.value} className="h-20" src={field.value} />

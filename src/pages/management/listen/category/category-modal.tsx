@@ -8,7 +8,7 @@ import { Input } from "@/ui/input";
 
 import categoryService from "@/api/services/categoryService";
 
-import { ImgUpload } from "@/mycomponent/ImgUpload";
+import { FileUpload } from "@/mycomponent/FileUpload";
 import { type CategoryFormData, categoryFormSchema } from "@/schemas/categorySchema";
 import type { Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -112,7 +112,8 @@ export function CategoryModal({ title, show, id, formValue, onOk, onCancel, kind
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">coverImgUrl</FormLabel>
 									<div className="col-span-3">
-										<ImgUpload
+										<FileUpload
+											fileTypes={["image/jpeg", "image/png"]}
 											uploadSucessFunc={(url: string) => {
 												form.setValue("coverImgUrl", url);
 											}}

@@ -2,9 +2,11 @@ import { Icon } from "@/components/icon";
 import { GLOBAL_CONFIG } from "@/global-config";
 import userStore from "@/store/userStore";
 import type ApiResponse from "@/types/apiResponse";
-import { Button, Upload, type UploadProps, message } from "antd";
+import { Button, Upload, type UploadProps } from "antd";
 import { useState } from "react";
-export function ImgUpload({ uploadSucessFunc }: { uploadSucessFunc: (url: any) => void }) {
+import { toast } from "sonner";
+
+export function FileUpload({ fileTypes, uploadSucessFunc }: { fileTypes: string[]; uploadSucessFunc: (url: any) => void }) {
 	const [showuploadlist, setShowuploadlist] = useState(true);
 	const accessToken = userStore.getState().userToken?.accessToken;
 	//	console.log("设置 Authorization:", accessToken);
@@ -18,20 +20,27 @@ export function ImgUpload({ uploadSucessFunc }: { uploadSucessFunc: (url: any) =
 		headers: {
 			authorization: authorization,
 		},
+		beforeUpload: (file) => {
+			const isValid = fileTypes.includes(file.type);
+			if (!isValid) {
+				toast.error(`${file.name} is not a png/jpg/jpeg file`);
+			}
+			return isValid || Upload.LIST_IGNORE;
+		},
 		onChange(info) {
 			setShowuploadlist(true);
 			if (info.file.status !== "uploading") {
 				console.log(info.file, info.fileList);
 			}
 			if (info.file.status === "done") {
-				message.success(`${info.file.name} file uploaded successfully`);
+				toast.success(`${info.file.name} file uploaded successfully`);
 				const resp: ApiResponse = info.file.response;
 				if (resp?.success) {
 					uploadSucessFunc(resp.data);
 					setShowuploadlist(false);
 				}
 			} else if (info.file.status === "error") {
-				message.error(`${info.file.name} file upload failed.`);
+				toast.error(`${info.file.name} file upload failed.`);
 			}
 		},
 	};
