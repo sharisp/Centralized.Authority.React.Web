@@ -5,7 +5,7 @@ import { z } from "zod";
 export const AlbumFormSchema = z.object({
 	title: z.string().nonempty("Title is required"),
 	sequenceNumber: z.string().nonempty("sequenceNumber required"),
-	coverImgUrl: z.string().url().optional(),
+	coverImgUrl: z.string().url().or(z.literal("")).optional(),
 	categoryId: z.string().nonempty("categoryId required"),
 });
 
