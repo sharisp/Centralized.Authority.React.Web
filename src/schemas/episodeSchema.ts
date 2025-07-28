@@ -5,7 +5,7 @@ import { z } from "zod";
 export const EpisodeFormSchema = z.object({
 	title: z.string().nonempty("Title is required"),
 	sequenceNumber: z.string().nonempty("sequenceNumber required"),
-	coverImgUrl: z.string().url().optional(),
+	coverImgUrl: z.string().url().or(z.literal("")).optional(),
 	albumId: z.string().nonempty("albumId required"),
 	subtitleType: z.string().optional(),
 	subtitleContent: z.string().nonempty("subtitleContent required"),

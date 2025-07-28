@@ -259,7 +259,7 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 							control={form.control}
 							name="coverImgUrl"
 							render={({ field, fieldState }) => (
-								<FormItem className="grid grid-cols-4 items-center gap-4">
+								<FormItem hidden={true} className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">coverImgUrl</FormLabel>
 									<div className="col-span-3">
 										<FormControl>{<Input {...field} />}</FormControl>
