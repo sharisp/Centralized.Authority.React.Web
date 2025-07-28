@@ -10,7 +10,7 @@ import episodeService from "@/api/services/episodeService";
 
 import albumService from "@/api/services/albumService";
 import categoryService from "@/api/services/categoryService";
-import fileService from "@/api/services/fileService";
+import { FileUpload } from "@/mycomponent/FileUpload";
 import { type EpisodeFormData, EpisodeFormSchema } from "@/schemas/episodeSchema";
 import type { Album, Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -24,7 +24,7 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 	const isCreate = id === "0" || id === "";
 
 	const [categories, setCategories] = useState<Category[]>([]);
-	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+	//	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [categoryId, setCategoryId] = useState<string>("");
 	const [isloading, setloading] = useState(false);
 	const [albums, setAlbums] = useState<Album[]>([]);
@@ -36,20 +36,8 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 	const onSubmit = async () => {
 		setloading(true);
 		const model: EpisodeFormData = form.getValues();
-		if (isCreate) {
-			if (selectedFile === null) {
-				toast.error("please select file");
-				setloading(false);
-				return;
-			}
-		}
 
 		try {
-			if (selectedFile !== null) {
-				const formData = new FormData();
-				formData.append("file", selectedFile);
-				model.audioUrl = await fileService.upload(formData);
-			}
 			if (!model.subtitleType) {
 				model.subtitleType = "json";
 			}
@@ -204,25 +192,22 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 								<FormItem className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">audio</FormLabel>
 									<div className="col-span-3">
-										<FormControl>{<Input {...field} />}</FormControl>
+										<FormControl>{<Input hidden={true} {...field} />}</FormControl>
 										<>
+											<FileUpload
+												fileTypes={["audio/mpeg", "audio/mp4", "audio/x-m4a"]}
+												uploadSucessFunc={(url: string) => {
+													form.setValue("audioUrl", url);
+												}}
+											/>
+											<FormControl>{<Input hidden={true} {...field} />}</FormControl>
+
 											{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 											{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 											<audio hidden={isCreate} src={field.value} controls preload="metadata">
 												Your browser does not support the audio element.
 											</audio>
 										</>
-										<Input
-											type="file"
-											accept=".m4a"
-											onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-												console.log(e);
-												const file = e.target.files?.[0];
-												if (file) {
-													setSelectedFile(file);
-												}
-											}}
-										/>
 									</div>
 								</FormItem>
 							)}

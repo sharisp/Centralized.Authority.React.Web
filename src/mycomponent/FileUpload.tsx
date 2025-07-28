@@ -23,7 +23,7 @@ export function FileUpload({ fileTypes, uploadSucessFunc }: { fileTypes: string[
 		beforeUpload: (file) => {
 			const isValid = fileTypes.includes(file.type);
 			if (!isValid) {
-				toast.error(`${file.name} is not a png/jpg/jpeg file`);
+				toast.error(`${file.name} is not a correct file type`);
 			}
 			return isValid || Upload.LIST_IGNORE;
 		},
