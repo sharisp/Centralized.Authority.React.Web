@@ -204,7 +204,7 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 
 											{fieldState.error && <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>}
 											{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
-											<audio hidden={isCreate} src={field.value} controls preload="metadata">
+											<audio hidden={!field.value} src={field.value} controls preload="metadata">
 												Your browser does not support the audio element.
 											</audio>
 										</>
