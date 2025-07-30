@@ -11,12 +11,17 @@ import { toast } from "sonner";
 
 import { type changePwdData, changePwdSchema } from "@/schemas/changepwdSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
 export function ChangePwdModal({ title, show, formValue, onOk, onCancel }: ModalProps<changePwdData>) {
 	const form = useForm<changePwdData>({
 		resolver: zodResolver(changePwdSchema),
 		defaultValues: formValue,
 	});
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		form.reset(formValue);
+	}, [formValue, form, show]);
 
 	const onSubmit = async () => {
 		const model = form.getValues();
