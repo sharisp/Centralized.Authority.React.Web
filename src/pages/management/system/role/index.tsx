@@ -1,6 +1,7 @@
 import roleService from "@/api/services/roleService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { Permission } from "@/mycomponent/Permission";
 import { ConvertToFormData, type RoleFormData } from "@/schemas/roleFormSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
@@ -99,9 +100,11 @@ export default function RolePage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
+					<Permission permissionKey="Identity.Role.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</Permission>
 					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
 						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
 					</Button>

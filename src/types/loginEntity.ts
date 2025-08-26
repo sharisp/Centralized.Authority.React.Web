@@ -19,7 +19,7 @@ export interface LoginUser {
 	email: string;
 	roles?: UserRole[];
 	status?: BasicStatus;
-	permissions?: UserPermissions[];
+	permissions?: string[];
 	menus?: UserMenus[];
 }
 
