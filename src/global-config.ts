@@ -8,7 +8,7 @@ export type GlobalConfig = {
 	basePath: string;
 	baseApi: string;
 	routerMode: "frontend" | "backend";
-	showButton: boolean;
+	buttonPermission: boolean;
 };
 
 export const GLOBAL_CONFIG: GlobalConfig = {
@@ -19,5 +19,5 @@ export const GLOBAL_CONFIG: GlobalConfig = {
 	basePath: import.meta.env.VITE_APP_BASE_PATH || "/",
 	baseApi: import.meta.env.VITE_APP_BASE_API || "/api",
 	routerMode: import.meta.env.VITE_APP_ROUTER_MODE || "frontend",
-	showButton: import.meta.env.VITE_APP_SHOW_BUTTON,
+	buttonPermission: import.meta.env.VITE_APP_BUTTON_PERMISSION === "true",
 };
