@@ -105,9 +105,11 @@ export default function RolePage() {
 							<Icon icon="solar:pen-bold-duotone" size={18} />
 						</Button>
 					</Permission>
-					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
-						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
-					</Button>
+					<Permission permissionKey="Identity.Role.Delete">
+						<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
+							<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
+						</Button>
+					</Permission>
 				</div>
 			),
 		},
