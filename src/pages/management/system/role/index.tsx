@@ -201,10 +201,11 @@ export default function RolePage() {
 									>
 										Clear
 									</Button>
-
-									<Button type="button" onClick={onCreate}>
-										New
-									</Button>
+									<Permission permissionKey="Identity.Role.Create">
+										<Button type="button" onClick={onCreate}>
+											New
+										</Button>
+									</Permission>
 								</Space>
 							</Col>
 						</Row>
