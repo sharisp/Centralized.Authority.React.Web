@@ -13,6 +13,8 @@ import Table, { type ColumnsType } from "antd/es/table";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { PagenationParam, Sys } from "#/systemEntity";
+
+import { Permission } from "@/mycomponent/Permission";
 import { MenuModal } from "./menu-modal";
 
 const DEFAULE_VALUE: MenuFormData = {
@@ -222,7 +224,9 @@ export default function menuPage() {
 							</Col>
 							<Col span={8} key={3}>
 								<Space size="large">
-									<Button type="submit">Search</Button>
+									<Permission permissionKey="Identity.Menu.List">
+										<Button type="submit">Search</Button>
+									</Permission>
 									<Button
 										type="button"
 										onClick={() => {
