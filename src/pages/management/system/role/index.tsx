@@ -192,7 +192,9 @@ export default function RolePage() {
 							</Col>
 							<Col span={8} key={3}>
 								<Space size="large">
-									<Button type="submit">Search</Button>
+									<Permission permissionKey="Identity.Role.List">
+										<Button type="submit">Search</Button>
+									</Permission>
 									<Button
 										type="button"
 										onClick={() => {
