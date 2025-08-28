@@ -236,9 +236,11 @@ export default function menuPage() {
 										Clear
 									</Button>
 
-									<Button type="button" onClick={onCreate}>
-										New
-									</Button>
+									<Permission permissionKey="Identity.Menu.Create">
+										<Button type="button" onClick={onCreate}>
+											New
+										</Button>
+									</Permission>
 								</Space>
 							</Col>
 						</Row>
