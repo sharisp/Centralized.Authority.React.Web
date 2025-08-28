@@ -122,9 +122,11 @@ export default function menuPage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
+					<Permission permissionKey="Identity.Menu.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</Permission>
 					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
 						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
 					</Button>
