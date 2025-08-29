@@ -107,9 +107,12 @@ export default function permissionPage() {
 					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
 						<Icon icon="solar:pen-bold-duotone" size={18} />
 					</Button>
-					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
-						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
-					</Button>
+
+					<PermissionButton permissionKey="Identity.Menu.Delete">
+						<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
+							<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
+						</Button>
+					</PermissionButton>
 				</div>
 			),
 		},
@@ -207,7 +210,7 @@ export default function permissionPage() {
 									>
 										Clear
 									</Button>
-									<PermissionButton permissionKey="Identity.Menu.Delete">
+									<PermissionButton permissionKey="Identity.Menu.Create">
 										<Button type="button" onClick={onCreate}>
 											New
 										</Button>
