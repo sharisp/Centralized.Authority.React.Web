@@ -1,6 +1,7 @@
 import permissionService from "@/api/services/permissionService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { Permission as PermissionButton } from "@/mycomponent/Permission";
 import { ConvertToFormData, type PermissionFormData } from "@/schemas/permissionSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
@@ -103,12 +104,17 @@ export default function permissionPage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
-						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
-					</Button>
+					<PermissionButton permissionKey="Identity.Menu.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</PermissionButton>
+
+					<PermissionButton permissionKey="Identity.Menu.Delete">
+						<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
+							<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
+						</Button>
+					</PermissionButton>
 				</div>
 			),
 		},
@@ -206,10 +212,11 @@ export default function permissionPage() {
 									>
 										Clear
 									</Button>
-
-									<Button type="button" onClick={onCreate}>
-										New
-									</Button>
+									<PermissionButton permissionKey="Identity.Menu.Create">
+										<Button type="button" onClick={onCreate}>
+											New
+										</Button>
+									</PermissionButton>
 								</Space>
 							</Col>
 						</Row>
