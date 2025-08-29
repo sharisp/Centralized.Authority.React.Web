@@ -1,6 +1,7 @@
 import permissionService from "@/api/services/permissionService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { Permission as PermissionButton } from "@/mycomponent/Permission";
 import { ConvertToFormData, type PermissionFormData } from "@/schemas/permissionSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
@@ -206,10 +207,11 @@ export default function permissionPage() {
 									>
 										Clear
 									</Button>
-
-									<Button type="button" onClick={onCreate}>
-										New
-									</Button>
+									<PermissionButton permissionKey="Identity.Menu.Delete">
+										<Button type="button" onClick={onCreate}>
+											New
+										</Button>
+									</PermissionButton>
 								</Space>
 							</Col>
 						</Row>
