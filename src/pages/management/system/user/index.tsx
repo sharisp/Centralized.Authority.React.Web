@@ -1,6 +1,7 @@
 import userService from "@/api/services/userService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { Permission } from "@/mycomponent/Permission";
 import { ConvertToUserFormData, type UserFormData } from "@/schemas/userFormSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
@@ -201,9 +202,11 @@ export default function UserPage() {
 										Clear
 									</Button>
 
-									<Button type="button" onClick={onCreate}>
-										New
-									</Button>
+									<Permission permissionKey="Identity.User.Create">
+										<Button type="button" onClick={onCreate}>
+											New
+										</Button>
+									</Permission>
 								</Space>
 							</Col>
 						</Row>
