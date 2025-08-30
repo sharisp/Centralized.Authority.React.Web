@@ -1,6 +1,7 @@
 import userService from "@/api/services/userService";
 // import { ROLE_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
+import { Permission } from "@/mycomponent/Permission";
 import { ConvertToUserFormData, type UserFormData } from "@/schemas/userFormSchema";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
@@ -92,12 +93,17 @@ export default function UserPage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
-						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
-					</Button>
+					<Permission permissionKey="Identity.User.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</Permission>
+
+					<Permission permissionKey="Identity.User.Delete">
+						<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
+							<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
+						</Button>
+					</Permission>
 				</div>
 			),
 		},
@@ -201,9 +207,11 @@ export default function UserPage() {
 										Clear
 									</Button>
 
-									<Button type="button" onClick={onCreate}>
-										New
-									</Button>
+									<Permission permissionKey="Identity.User.Create">
+										<Button type="button" onClick={onCreate}>
+											New
+										</Button>
+									</Permission>
 								</Space>
 							</Col>
 						</Row>
