@@ -3,6 +3,7 @@ import categoryService from "@/api/services/categoryService";
 import kindService from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
 import { ConfirmOperate } from "@/mycomponent/ConfirmOperate";
+import { Permission } from "@/mycomponent/Permission";
 import { type AlbumFormData, ConvertToFormData } from "@/schemas/albumSchema";
 import type { Album, Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -117,9 +118,11 @@ export default function albumPage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
+					<Permission permissionKey="ListeningAdmin.Album.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</Permission>
 					<ConfirmOperate
 						hide={record.isShow}
 						id={record.id}
