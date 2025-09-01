@@ -1,6 +1,7 @@
 import kindService, { Api } from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
 import { ConfirmOperate } from "@/mycomponent/ConfirmOperate";
+import { Permission } from "@/mycomponent/Permission";
 import { ConvertToFormData, type KindFormData } from "@/schemas/kindSchema";
 import type { Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -133,18 +134,22 @@ export default function KindPage() {
 						icon="ic:baseline-visibility"
 					/>
 
-					<ConfirmOperate
-						hide={!record.isShow}
-						id={record.id}
-						title="are you sure to hide this?"
-						url={Api.hide}
-						callback={() => getList(queryStateRef.current)}
-						setloading={setIsLoading}
-						icon="ic:baseline-visibility-off"
-					/>
-					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
-						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
-					</Button>
+					<Permission permissionKey="Identity.Kind.Hide">
+						<ConfirmOperate
+							hide={!record.isShow}
+							id={record.id}
+							title="are you sure to hide this?"
+							url={Api.hide}
+							callback={() => getList(queryStateRef.current)}
+							setloading={setIsLoading}
+							icon="ic:baseline-visibility-off"
+						/>
+					</Permission>
+					<Permission permissionKey="Identity.Kind.Delete">
+						<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
+							<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
+						</Button>
+					</Permission>
 				</div>
 			),
 		},
