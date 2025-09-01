@@ -134,16 +134,17 @@ export default function KindPage() {
 						icon="ic:baseline-visibility"
 					/>
 
-					<ConfirmOperate
-						hide={!record.isShow}
-						id={record.id}
-						title="are you sure to hide this?"
-						url={Api.hide}
-						callback={() => getList(queryStateRef.current)}
-						setloading={setIsLoading}
-						icon="ic:baseline-visibility-off"
-					/>
-
+					<Permission permissionKey="Identity.Kind.Hide">
+						<ConfirmOperate
+							hide={!record.isShow}
+							id={record.id}
+							title="are you sure to hide this?"
+							url={Api.hide}
+							callback={() => getList(queryStateRef.current)}
+							setloading={setIsLoading}
+							icon="ic:baseline-visibility-off"
+						/>
+					</Permission>
 					<Permission permissionKey="Identity.Kind.Delete">
 						<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
 							<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
