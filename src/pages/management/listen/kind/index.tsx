@@ -124,16 +124,18 @@ export default function KindPage() {
 					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
 						<Icon icon="solar:pen-bold-duotone" size={18} />
 					</Button>
-					<ConfirmOperate
-						hide={record.isShow}
-						id={record.id}
-						title="are you sure to show this?"
-						url={Api.show}
-						callback={() => getList(queryStateRef.current)}
-						setloading={setIsLoading}
-						icon="ic:baseline-visibility"
-					/>
 
+					<Permission permissionKey="Identity.Kind.Show">
+						<ConfirmOperate
+							hide={record.isShow}
+							id={record.id}
+							title="are you sure to show this?"
+							url={Api.show}
+							callback={() => getList(queryStateRef.current)}
+							setloading={setIsLoading}
+							icon="ic:baseline-visibility"
+						/>
+					</Permission>
 					<Permission permissionKey="Identity.Kind.Hide">
 						<ConfirmOperate
 							hide={!record.isShow}
