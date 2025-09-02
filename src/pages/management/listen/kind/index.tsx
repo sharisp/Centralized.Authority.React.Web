@@ -121,10 +121,11 @@ export default function KindPage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
-
+					<Permission permissionKey="Identity.Kind.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</Permission>
 					<Permission permissionKey="Identity.Kind.Show">
 						<ConfirmOperate
 							hide={record.isShow}
