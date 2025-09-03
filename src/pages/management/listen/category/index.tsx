@@ -133,16 +133,18 @@ export default function categoryPage() {
 							<Icon icon="solar:pen-bold-duotone" size={18} />
 						</Button>
 					</Permission>
-					<ConfirmOperate
-						hide={record.isShow}
-						id={record.id}
-						title="are you sure to show this?"
-						url={Api.show}
-						callback={() => getList(queryStateRef.current)}
-						setloading={setIsLoading}
-						icon="ic:baseline-visibility"
-					/>
 
+					<Permission permissionKey="ListeningAdmin.Category.Show">
+						<ConfirmOperate
+							hide={record.isShow}
+							id={record.id}
+							title="are you sure to show this?"
+							url={Api.show}
+							callback={() => getList(queryStateRef.current)}
+							setloading={setIsLoading}
+							icon="ic:baseline-visibility"
+						/>
+					</Permission>
 					<ConfirmOperate
 						hide={!record.isShow}
 						id={record.id}
