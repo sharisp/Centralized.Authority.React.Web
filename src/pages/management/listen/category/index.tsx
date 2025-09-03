@@ -2,6 +2,7 @@ import categoryService, { Api } from "@/api/services/categoryService";
 import kindService from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
 import { ConfirmOperate } from "@/mycomponent/ConfirmOperate";
+import { Permission } from "@/mycomponent/Permission";
 import { type CategoryFormData, ConvertToFormData } from "@/schemas/categorySchema";
 import type { Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -127,9 +128,11 @@ export default function categoryPage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
+					<Permission permissionKey="ListeningAdmin.Category.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</Permission>
 					<ConfirmOperate
 						hide={record.isShow}
 						id={record.id}
