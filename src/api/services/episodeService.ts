@@ -1,7 +1,7 @@
 import type { BaseResponse } from "@/types/apiResponse";
 
 import type { EpisodeFormData } from "@/schemas/episodeSchema";
-import type { Album, Episode } from "@/types/listenEntity";
+import type { Episode } from "@/types/listenEntity";
 import type { PagenationData, PagenationParam } from "@/types/systemEntity";
 import apiClient from "../apiClient";
 
@@ -22,11 +22,11 @@ const del = (id: string) => apiClient.delete<BaseResponse>({ url: `${Api.Base}/$
 const getlist = () => apiClient.get<Episode[]>({ url: Api.List });
 
 const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam) =>
-	apiClient.get<PagenationData<Album>>({
+	apiClient.get<PagenationData<Episode>>({
 		url: Api.Pagination,
 		params: { pageIndex, pageSize, ...queryParams },
 	});
-const getdetail = (id: string) => apiClient.get<Album>({ url: `${Api.Base}/${id}` });
+const getdetail = (id: string) => apiClient.get<Episode>({ url: `${Api.Base}/${id}` });
 
 export default {
 	create,

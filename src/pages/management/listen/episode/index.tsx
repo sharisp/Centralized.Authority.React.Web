@@ -5,7 +5,7 @@ import kindService from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
 import { ConfirmOperate } from "@/mycomponent/ConfirmOperate";
 import { ConvertToFormData, type EpisodeFormData } from "@/schemas/episodeSchema";
-import type { Album, Category, Kind } from "@/types/listenEntity";
+import type { Album, Category, Episode, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader } from "@/ui/card";
@@ -25,7 +25,7 @@ const DEFAULE_VALUE: EpisodeFormData = {
 	albumId: "",
 	audioUrl: "",
 	subtitleContent: "",
-	subtitleType: "",
+	subtitleType: "AI_Generate",
 };
 
 export default function episodePage() {
@@ -35,7 +35,7 @@ export default function episodePage() {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [paginationData, setPaginationData] = useState({
-		dataList: [] as Album[],
+		dataList: [] as Episode[],
 		totalCount: 0,
 	});
 	const [queryState, setQueryState] = useState<PagenationParam>({
@@ -116,7 +116,7 @@ export default function episodePage() {
 			setModalProps((prev) => ({ ...prev, show: false }));
 		},
 	});
-	const columns: ColumnsType<Album> = [
+	const columns: ColumnsType<Episode> = [
 		{ title: "Title", dataIndex: "title" },
 		{ title: "sequenceNumber", dataIndex: "sequenceNumber", width: 150 },
 		{
@@ -180,7 +180,7 @@ export default function episodePage() {
 			},
 		}));
 	};
-	const onview = async (field: Album) => {
+	const onview = async (field: Episode) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		try {
 			const detail = await episodeService.findById(field.id);
@@ -199,11 +199,12 @@ export default function episodePage() {
 			toast.error(`get detail error:${error}`);
 		}
 	};
-	const onEdit = async (field: Album) => {
+	const onEdit = async (field: Episode) => {
 		//	// can not use useQuery hook,this is calling in another hook
 		try {
 			const detail = await episodeService.findById(field.id);
 			const newfromValue = ConvertToFormData(detail);
+			newfromValue.subtitleType = "json";
 			setModalProps((prev) => ({
 				...prev,
 				show: true,
@@ -252,7 +253,7 @@ export default function episodePage() {
 	return (
 		<Card>
 			<CardHeader>
-				<div style={{ width: "100%" }}>Album List</div>
+				<div style={{ width: "100%" }}>Episode List</div>
 				<div className="items-center justify-between">
 					<Form form={searchForm} name="advanced_search" style={formStyle} onFinish={onSearch}>
 						<Row gutter={24}>
@@ -350,7 +351,7 @@ export default function episodePage() {
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Table<Album>
+				<Table<Episode>
 					rowKey="id"
 					size="small"
 					loading={isLoading}

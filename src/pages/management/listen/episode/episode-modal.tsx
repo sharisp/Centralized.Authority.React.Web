@@ -16,7 +16,7 @@ import type { Album, Category, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
 import { Textarea } from "@/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Select } from "antd";
+import { Radio, type RadioChangeEvent, Select } from "antd";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,6 +27,7 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 	//	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [categoryId, setCategoryId] = useState<string>("");
 	const [isloading, setloading] = useState(false);
+	const [isAIGenerate, setAIGenerate] = useState(true);
 	const [albums, setAlbums] = useState<Album[]>([]);
 	const form = useForm<EpisodeFormData>({
 		resolver: zodResolver(EpisodeFormSchema),
@@ -36,7 +37,8 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 	const onSubmit = async () => {
 		setloading(true);
 		const model: EpisodeFormData = form.getValues();
-
+		console.log(model);
+		//return
 		try {
 			if (!model.subtitleType) {
 				model.subtitleType = "json";
@@ -59,6 +61,9 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 
 	useEffect(() => {
 		form.reset(formValue);
+		setAIGenerate(true);
+		setloading(false);
+		setCategoryId("");
 	}, [formValue, form]);
 
 	return (
@@ -212,11 +217,37 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 								</FormItem>
 							)}
 						/>
+
+						<FormItem hidden={isCreate === false} className="grid grid-cols-4 items-center gap-4">
+							<FormLabel className="text-right">AI Generate</FormLabel>
+							<div className="col-span-3">
+								<Radio.Group
+									block
+									options={[
+										{ value: "AI", label: "AI Generate" },
+										{ value: "Manual", label: "Manual Upload" },
+									]}
+									onChange={(e: RadioChangeEvent) => {
+										if (e.target.value === "AI") {
+											form.setValue("subtitleType", "AI_Generate");
+											setAIGenerate(true);
+											//	setAlbums([]);
+										} else {
+											form.setValue("subtitleType", "json");
+											setAIGenerate(false);
+										}
+									}}
+									defaultValue="AI"
+									optionType="button"
+									buttonStyle="solid"
+								/>
+							</div>
+						</FormItem>
 						<FormField
 							control={form.control}
 							name="subtitleType"
 							render={({ field, fieldState }) => (
-								<FormItem className="grid grid-cols-4 items-center gap-4">
+								<FormItem hidden={isAIGenerate && isCreate} className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">subtitleType</FormLabel>
 									<div className="col-span-3">
 										<FormControl>
@@ -228,6 +259,7 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 													value={field.value ? field.value : "json"}
 													getPopupContainer={(triggerNode) => triggerNode.parentElement as HTMLElement}
 													options={[
+														{ value: "AI_Generate", label: "AI Generate", disabled: isAIGenerate === false || isCreate === false },
 														{ value: "json", label: "json" },
 														{ value: "lrc", label: "lrc" },
 														{ value: "srt", label: "srt" },
@@ -246,7 +278,7 @@ export function EpisodeModal({ title, show, id, formValue, onOk, onCancel, kinds
 							control={form.control}
 							name="subtitleContent"
 							render={({ field, fieldState }) => (
-								<FormItem className="grid grid-cols-4 items-center gap-4">
+								<FormItem hidden={isAIGenerate && isCreate} className="grid grid-cols-4 items-center gap-4">
 									<FormLabel className="text-right">subtitleContent</FormLabel>
 									<div className="col-span-3">
 										<FormControl>{<Textarea {...field} className="max-h-36" />}</FormControl>
