@@ -143,16 +143,17 @@ export default function episodePage() {
 						<Icon icon="mingcute:audio-tape-fill" size={18} />
 					</Button>
 
-					<ConfirmOperate
-						hide={record.isShow}
-						id={record.id}
-						title="are you sure to show this?"
-						url={Api.show}
-						callback={() => getList(queryStateRef.current)}
-						setloading={setIsLoading}
-						icon="ic:baseline-visibility"
-					/>
-
+					<Permission permissionKey="ListeningAdmin.Episode.Show">
+						<ConfirmOperate
+							hide={record.isShow}
+							id={record.id}
+							title="are you sure to show this?"
+							url={Api.show}
+							callback={() => getList(queryStateRef.current)}
+							setloading={setIsLoading}
+							icon="ic:baseline-visibility"
+						/>
+					</Permission>
 					<ConfirmOperate
 						hide={!record.isShow}
 						id={record.id}
