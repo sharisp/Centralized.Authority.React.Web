@@ -154,15 +154,18 @@ export default function episodePage() {
 							icon="ic:baseline-visibility"
 						/>
 					</Permission>
-					<ConfirmOperate
-						hide={!record.isShow}
-						id={record.id}
-						title="are you sure to hide this?"
-						url={Api.hide}
-						callback={() => getList(queryStateRef.current)}
-						setloading={setIsLoading}
-						icon="ic:baseline-visibility-off"
-					/>
+
+					<Permission permissionKey="ListeningAdmin.Episode.Hide">
+						<ConfirmOperate
+							hide={!record.isShow}
+							id={record.id}
+							title="are you sure to hide this?"
+							url={Api.hide}
+							callback={() => getList(queryStateRef.current)}
+							setloading={setIsLoading}
+							icon="ic:baseline-visibility-off"
+						/>
+					</Permission>
 					<Button variant="ghost" size="icon" onClick={() => onDel(record.id)}>
 						<Icon icon="mingcute:delete-2-fill" size={18} className="text-error!" />
 					</Button>
