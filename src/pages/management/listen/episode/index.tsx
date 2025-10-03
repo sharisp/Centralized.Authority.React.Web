@@ -4,6 +4,7 @@ import episodeService, { Api } from "@/api/services/episodeService";
 import kindService from "@/api/services/kindService";
 import { Icon } from "@/components/icon";
 import { ConfirmOperate } from "@/mycomponent/ConfirmOperate";
+import { Permission } from "@/mycomponent/Permission";
 import { ConvertToFormData, type EpisodeFormData } from "@/schemas/episodeSchema";
 import type { Album, Category, Episode, Kind } from "@/types/listenEntity";
 import type { ModalProps } from "@/types/types";
@@ -133,9 +134,11 @@ export default function episodePage() {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex w-full justify-center text-gray">
-					<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
-						<Icon icon="solar:pen-bold-duotone" size={18} />
-					</Button>
+					<Permission permissionKey="ListeningAdmin.Episode.Update">
+						<Button variant="ghost" size="icon" onClick={() => onEdit(record)}>
+							<Icon icon="solar:pen-bold-duotone" size={18} />
+						</Button>
+					</Permission>
 					<Button variant="ghost" size="icon" onClick={() => onview(record)}>
 						<Icon icon="mingcute:audio-tape-fill" size={18} />
 					</Button>
