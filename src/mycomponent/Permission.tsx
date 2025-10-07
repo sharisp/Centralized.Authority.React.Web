@@ -3,11 +3,11 @@ import { useUserPermissions } from "@/store/userStore";
 import type { ReactNode } from "react";
 
 export function Permission({ permissionKey, children }: { permissionKey: string; children: ReactNode }) {
-	if (GLOBAL_CONFIG.buttonPermission === false) {
+	if (GLOBAL_CONFIG.enableButtonPermission === false) {
 		return children;
 	}
 	const permissions = useUserPermissions();
-	console.log(permissionKey);
+	//console.log(permissionKey);
 	if (permissionKey && permissions.includes(permissionKey)) {
 		return children;
 	}
