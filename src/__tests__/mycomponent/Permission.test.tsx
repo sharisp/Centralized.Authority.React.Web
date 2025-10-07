@@ -26,4 +26,13 @@ describe("Permission", () => {
 		renderPermission({ enableButtonPermission: false, permissionKey: "" });
 		expect(screen.getByText("Test Content")).toBeInTheDocument();
 	});
+	test("does not render children if global config allows it,but not have permission", () => {
+		renderPermission({ enableButtonPermission: true, permissionKey: "fail.permission" });
+		expect(screen.queryByText("Test Content")).not.toBeInTheDocument();
+	});
+
+	test("render children if global config allows it,and have permission", () => {
+		renderPermission({ enableButtonPermission: true, permissionKey: "success.permission" });
+		expect(screen.getByText("Test Content")).toBeInTheDocument();
+	});
 });
