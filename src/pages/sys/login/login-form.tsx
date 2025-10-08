@@ -46,8 +46,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				closeButton: true,
 			});
 		} catch (err) {
-			console.log(err);
-			toast.error("Sign in fail!", {
+			const message = err instanceof Error ? err.message : "Sign in fail!";
+			toast.error(message, {
 				closeButton: true,
 			});
 		} finally {
