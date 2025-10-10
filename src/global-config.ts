@@ -12,7 +12,7 @@ export type GlobalConfig = {
 };
 
 export const GLOBAL_CONFIG: GlobalConfig = {
-	appName: import.meta.env.VITE_APP_NAME,
+	appName: import.meta.env.VITE_APP_NAME || "React App",
 	systemName: import.meta.env.VITE_APP_SystemName,
 	appVersion: packageJson.version,
 	homepage: import.meta.env.VITE_APP_HOMEPAGE || "/",
