@@ -16,7 +16,7 @@ export default function BannerCard() {
 					<h4>{userName}</h4>
 				</div>
 				<div style={{ color: themeVars.colors.palette.primary.dark }} className="mx-auto mb-6 mt-4 max-w-sm text-sm opacity-80 md:mx-0">
-					Welcome to use {GLOBAL_CONFIG.appName},  you can visite my github to find more:
+					Welcome to use {GLOBAL_CONFIG.appName}, you can visite my github to find more:
 					<div>
 						<a
 							href="https://github.com/sharisp"
@@ -29,7 +29,7 @@ export default function BannerCard() {
 						</a>
 					</div>
 				</div>
-				<div style={{ color: themeVars.colors.palette.primary.dark }} className="mx-auto mb-6 mt-4 max-w-sm text-sm opacity-80 md:mx-0">
+				<div hidden={true} style={{ color: themeVars.colors.palette.primary.dark }} className="mx-auto mb-6 mt-4 max-w-sm text-sm opacity-80 md:mx-0">
 					you can contact me through my Linkedin:
 					<div>
 						<a
@@ -43,7 +43,6 @@ export default function BannerCard() {
 						</a>
 					</div>
 				</div>
-
 			</div>
 
 			<div className="!md:max-w-[320px] mx-auto max-w-[270px]! flex-none items-center justify-center ">
