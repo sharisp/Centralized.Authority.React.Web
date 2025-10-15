@@ -114,7 +114,7 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 					</Button>
 
 					{/* 注册 */}
-					<div className="text-center text-sm">
+					<div hidden={true} className="text-center text-sm">
 						{t("sys.login.noAccount")}
 						<Button type="button" variant="link" className="px-1" onClick={() => setLoginState(LoginStateEnum.REGISTER)}>
 							{t("sys.login.signUpFormTitle")}
