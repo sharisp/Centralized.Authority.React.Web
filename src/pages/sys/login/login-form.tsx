@@ -124,7 +124,7 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 						type="button"
 						variant="outline"
 						aria-label="User Portal"
-						className="w-full"
+						className="w-full cursor-pointer"
 						onClick={() => {
 							window.location.href = "https://www.duxiaoxue.com/";
 						}}
