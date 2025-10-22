@@ -120,6 +120,17 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 							{t("sys.login.signUpFormTitle")}
 						</Button>
 					</div>
+					<Button
+						type="button"
+						variant="outline"
+						aria-label="User Portal"
+						className="w-full"
+						onClick={() => {
+							window.location.href = "https://www.duxiaoxue.com/";
+						}}
+					>
+						Visit User Portal
+					</Button>
 				</form>
 			</Form>
 		</div>
