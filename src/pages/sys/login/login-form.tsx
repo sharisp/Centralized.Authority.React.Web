@@ -108,7 +108,7 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 					</div>
 
 					{/* 登录按钮 */}
-					<Button type="submit" aria-label="Sign in" className="w-full">
+					<Button type="submit" aria-label="Sign in" className="w-full cursor-pointer">
 						{loading && <Loader2 className="animate-spin mr-2" />}
 						{t("sys.login.loginButton")}
 					</Button>
