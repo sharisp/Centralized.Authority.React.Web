@@ -49,6 +49,7 @@
 			"policyPlaceholder": "Register after checking",
 			"privacyPolicy": " Privacy policy ",
 			"qrSignInFormTitle": "Qr code sign in",
+			"googleSignInFormTitle": "Google sign in",
 			"registerAndAgree": "By signing up, I agree to",
 			"registerButton": "Sign up",
 			"rememberMe": "Remember me",

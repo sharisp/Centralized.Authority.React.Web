@@ -1,4 +1,5 @@
 import type { SignInReq } from "@/api/services/userService";
+import { Icon } from "@/components/icon";
 //import { Icon } from "@/components/icon";
 import { GLOBAL_CONFIG } from "@/global-config";
 import { useSignIn } from "@/store/userStore";
@@ -112,7 +113,18 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 						{loading && <Loader2 className="animate-spin mr-2" />}
 						{t("sys.login.loginButton")}
 					</Button>
-
+					<div className="">
+						<Button
+							variant="outline"
+							className="w-full cursor-pointer bg-chart2"
+							onClick={() => {
+								window.location.href = `https://accounts.google.com/signin/oauth/oauthchooseaccount?client_id=695095829749-f8k4vialqju865r9koq0fg3kp44dp4qs.apps.googleusercontent.com&flowName=GeneralOAuthFlow&o2v=2&redirect_uri=http%3A%2F%2Flocalhost%3A5016%2Fapi%2FOAuth%3Fprovider%3Dgoogle&response_type=code&scope=email%20profile&service=lso&state=${Math.random()}`;
+							}}
+						>
+							<Icon icon="ant-design:google-circle-filled" size={20} />
+							{t("sys.login.googleSignInFormTitle")}
+						</Button>
+					</div>
 					{/* 注册 */}
 					<div hidden={true} className="text-center text-sm">
 						{t("sys.login.noAccount")}
