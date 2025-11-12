@@ -3,7 +3,7 @@ import apiClient from "../apiClient";
 import type { changePwdData } from "@/schemas/changepwdSchema";
 import type { UserFormData } from "@/schemas/userFormSchema";
 import type { BaseResponse } from "@/types/apiResponse";
-import type { UserLoginResponse } from "@/types/loginEntity";
+import type { OAuthLogin, UserLoginResponse } from "@/types/loginEntity";
 import type { PagenationData, PagenationParam, User } from "@/types/systemEntity";
 import type { UserInfo, UserToken } from "#/entity";
 
@@ -20,7 +20,7 @@ export type SignInRes = UserToken & { user: UserInfo };
 
 export enum UserApi {
 	SignIn = "/identity/api/login/weblogin",
-
+	OAuth = "/identity/api/OAuth",
 	Logout = "/identity/api/login/logout",
 	Refresh = "/identity/api/login/RefreshToken",
 	RolePagination = "/identity/api/user/pagination",
@@ -29,7 +29,7 @@ export enum UserApi {
 }
 
 const signin = (data: SignInReq) => apiClient.post<UserLoginResponse>({ url: UserApi.SignIn, data });
-
+const oauth = (data: OAuthLogin) => apiClient.post<UserLoginResponse>({ url: UserApi.OAuth, data });
 const logout = () => apiClient.get({ url: UserApi.Logout });
 const findById = (id: string) => apiClient.get<User>({ url: `${UserApi.User}/${id}` });
 
@@ -45,6 +45,7 @@ const getpaginationlist = ({ pageIndex, pageSize, queryParams }: PagenationParam
 	});
 export default {
 	signin,
+	oauth,
 	create,
 	update,
 	findById,

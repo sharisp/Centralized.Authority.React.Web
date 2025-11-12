@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import userService, { type SignInReq } from "@/api/services/userService";
 
-import type { LoginUser, Token, UserMenus } from "@/types/loginEntity";
+import type { LoginUser, OAuthLogin, Token, UserMenus } from "@/types/loginEntity";
 import { convertFlatToTree } from "@/utils/tree";
 //import { toast } from "sonner";
 //import type { UserInfo, UserToken } from "#/entity";
@@ -87,4 +87,29 @@ export const useSignIn = () => {
 	return signIn;
 };
 
+export const useOAuthSignIn = () => {
+	const { setUserToken, setUserInfo } = useUserActions();
+
+	const signInMutation = useMutation({
+		mutationFn: userService.oauth,
+	});
+
+	const signIn = async (data: OAuthLogin) => {
+		const res = await signInMutation.mutateAsync(data);
+
+		const { token, ...user } = res;
+		console.log(token);
+		console.log(user);
+		setUserToken(token);
+		setUserInfo(user);
+		const routerTree = convertFlatToTree(user.menus ?? []);
+
+		//	const routes = convertToRoute(tree);
+
+		//console.log(tree, routes, getBackendDashboardRoutes());
+		useRouteStore.getState().setRoutes(routerTree);
+	};
+
+	return signIn;
+};
 export default useUserStore;

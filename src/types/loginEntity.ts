@@ -8,6 +8,12 @@ export interface Token {
 	accessToken?: string;
 	refreshToken?: string;
 }
+export interface OAuthLogin {
+	code: string;
+	state?: string | null;
+	systemName?: string;
+	provider: string;
+}
 
 export interface UserLoginResponse extends LoginUser {
 	token: Token;
