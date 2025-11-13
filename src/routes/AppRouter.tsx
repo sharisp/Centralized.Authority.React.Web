@@ -16,7 +16,7 @@ import { convertToRoute } from "./sections/dashboard/backend";
 export default function AppRouter() {
 	const menutree = useRouteStore((state) => state.routes);
 	const dynamicRoutes = convertToRoute(menutree);
-
+	console.log("Dynamic Routes:", dynamicRoutes);
 	const router = useMemo(() => {
 		return createBrowserRouter(
 			[

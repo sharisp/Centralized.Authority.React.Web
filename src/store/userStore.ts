@@ -82,6 +82,7 @@ export const useSignIn = () => {
 
 		//console.log(tree, routes, getBackendDashboardRoutes());
 		useRouteStore.getState().setRoutes(routerTree);
+		return res;
 	};
 
 	return signIn;

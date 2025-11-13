@@ -3,11 +3,6 @@ import LocalePicker from "@/components/locale-picker";
 import Logo from "@/components/logo";
 import { GLOBAL_CONFIG } from "@/global-config";
 import SettingButton from "@/layouts/components/setting-button";
-import { useUserInfo, useUserToken } from "@/store/userStore";
-import { MenuType } from "@/types/loginEntity";
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
 import LoginForm from "./login-form";
 import MobileForm from "./mobile-form";
 import { LoginProvider } from "./providers/login-provider";
@@ -16,33 +11,6 @@ import RegisterForm from "./register-form";
 import ResetForm from "./reset-form";
 
 function LoginPage() {
-	const token = useUserToken();
-
-	const menus = useUserInfo().menus;
-	const navigate = useNavigate();
-	useEffect(() => {
-		if (token.accessToken) {
-			if (!menus || menus.length === 0) {
-				toast.error("no permission menus for this account");
-			} else {
-				if (menus.filter((t) => t.path?.toLowerCase() === GLOBAL_CONFIG.homepage.toLowerCase()).length > 0) {
-					navigate(GLOBAL_CONFIG.homepage, { replace: true });
-				} else {
-					//	toast.error("no permission menus for the homepage");
-					for (const element of menus) {
-						if (element.path?.toLowerCase() !== GLOBAL_CONFIG.homepage.toLowerCase()) {
-							if (element.type === MenuType.Menu && element.path) {
-								navigate(element.path, { replace: true });
-								break;
-							}
-						}
-					}
-				}
-				//	return <Navigate to={GLOBAL_CONFIG.homepage} replace />;
-			}
-		}
-	}, [token, menus, navigate]);
-
 	return (
 		<div className="relative grid min-h-svh lg:grid-cols-2 bg-background">
 			<div className="flex flex-col gap-4 p-6 md:p-10">

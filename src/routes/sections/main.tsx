@@ -7,6 +7,8 @@ const Page403 = lazy(() => import("@/pages/sys/error/Page403"));
 const Page404 = lazy(() => import("@/pages/sys/error/Page404"));
 const Page500 = lazy(() => import("@/pages/sys/error/Page500"));
 
+const PageOAuth = lazy(() => import("@/pages/sys/login/oauth_auto_login"));
+
 export const mainRoutes: RouteObject[] = [
 	{
 		path: "/",
@@ -21,6 +23,7 @@ export const mainRoutes: RouteObject[] = [
 			{ path: "500", element: <Page500 /> },
 			{ path: "404", element: <Page404 /> },
 			{ path: "403", element: <Page403 /> },
+			{ path: "oauth", element: <PageOAuth /> },
 		],
 	},
 ];

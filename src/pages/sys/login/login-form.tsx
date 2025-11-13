@@ -13,7 +13,6 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { LoginStateEnum, useLoginStateContext } from "./providers/login-provider";
 
@@ -21,7 +20,6 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 	const { t } = useTranslation();
 	const [loading, setLoading] = useState(false);
 	const [remember, setRemember] = useState(true);
-	const navigatge = useNavigate();
 
 	const { loginState, setLoginState } = useLoginStateContext();
 	const signIn = useSignIn();
@@ -39,13 +37,19 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 	const handleFinish = async (values: SignInReq) => {
 		setLoading(true);
 		try {
-			await signIn(values);
-			setTimeout(() => {
-				navigatge(GLOBAL_CONFIG.homepage, { replace: true });
-			}, 0);
+			const res = await signIn(values);
+			console.log("Login Form SignIn Res:", res);
+			/*	setTimeout(() => {
+					console.log(localStorage);
+					//	window.history.replaceState({}, "", GLOBAL_CONFIG.homepage);
+					//window.location.replace(GLOBAL_CONFIG.homepage);
+					navigatge(GLOBAL_CONFIG.homepage, { replace: true });
+				}, 1000);*/
 			toast.success("Sign in success!", {
 				closeButton: true,
 			});
+			window.history.replaceState({}, "", GLOBAL_CONFIG.homepage);
+			window.location.replace(GLOBAL_CONFIG.homepage);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : "Sign in fail!";
 			toast.error(message, {
@@ -115,10 +119,11 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 					</Button>
 					<div className="">
 						<Button
+							type="button"
 							variant="outline"
 							className="w-full cursor-pointer bg-chart2"
 							onClick={() => {
-								window.location.href = `https://accounts.google.com/signin/oauth/oauthchooseaccount?client_id=695095829749-f8k4vialqju865r9koq0fg3kp44dp4qs.apps.googleusercontent.com&flowName=GeneralOAuthFlow&o2v=2&redirect_uri=http%3A%2F%2Flocalhost%3A5016%2Fapi%2FOAuth%3Fprovider%3Dgoogle&response_type=code&scope=email%20profile&service=lso&state=${Math.random()}`;
+								window.location.href = `https://accounts.google.com/signin/oauth/oauthchooseaccount?client_id=695095829749-f8k4vialqju865r9koq0fg3kp44dp4qs.apps.googleusercontent.com&flowName=GeneralOAuthFlow&o2v=2&redirect_uri=http://localhost:3001/oauth?provider=Google&response_type=code&scope=email profile&service=lso&state=${Math.random()}`;
 							}}
 						>
 							<Icon icon="ant-design:google-circle-filled" size={20} />
