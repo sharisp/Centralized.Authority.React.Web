@@ -41,8 +41,10 @@ export default function OAuthAutoLogin() {
 				toast.error(message, {
 					closeButton: true,
 				});
-				window.history.replaceState({}, "", "/auth/login");
-				window.location.replace("/auth/login");
+				setTimeout(() => {
+					window.history.replaceState({}, "", "/auth/login");
+					window.location.replace("/auth/login");
+				}, 2000);
 			}
 		}
 

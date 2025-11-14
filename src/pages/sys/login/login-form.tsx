@@ -123,7 +123,9 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
 							variant="outline"
 							className="w-full cursor-pointer bg-chart2"
 							onClick={() => {
-								window.location.href = `https://accounts.google.com/signin/oauth/oauthchooseaccount?client_id=695095829749-f8k4vialqju865r9koq0fg3kp44dp4qs.apps.googleusercontent.com&flowName=GeneralOAuthFlow&o2v=2&redirect_uri=http://localhost:3001/oauth?provider=Google&response_type=code&scope=email profile&service=lso&state=${Math.random()}`;
+								const origin = window.location.origin;
+								console.log("OAuth Origin:", origin);
+								window.location.href = `https://accounts.google.com/signin/oauth/oauthchooseaccount?client_id=695095829749-f8k4vialqju865r9koq0fg3kp44dp4qs.apps.googleusercontent.com&flowName=GeneralOAuthFlow&o2v=2&redirect_uri=${origin}/oauth?provider=Google&response_type=code&scope=email%20profile&service=lso&state=${Math.random()}`;
 							}}
 						>
 							<Icon icon="ant-design:google-circle-filled" size={20} />
