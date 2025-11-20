@@ -1,12 +1,14 @@
 import { GLOBAL_CONFIG } from "@/global-config";
 import { useOAuthSignIn } from "@/store/userStore";
+import { Spin } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import LoginPage from ".";
 
 export default function OAuthAutoLogin() {
-	const [msg, setMsg] = useState("login...");
+	//const [msg, setMsg] = useState("login...");
 	const signIn = useOAuthSignIn();
-
+	const [loading, setLoading] = useState(true);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function handle() {
@@ -16,11 +18,17 @@ export default function OAuthAutoLogin() {
 
 			const provider = params.get("provider");
 			if (!code) {
-				setMsg("Missing code, login failed.");
+				toast.error("Missing code, login failed!", {
+					closeButton: true,
+				});
+				//setMsg("Missing code, login failed.");
 				return;
 			}
 			if (!provider) {
-				setMsg("Missing provider, login failed.");
+				toast.error("Missing code, login failed!", {
+					closeButton: true,
+				});
+				//setMsg("Missing provider, login failed.");
 				return;
 			}
 			try {
@@ -28,8 +36,8 @@ export default function OAuthAutoLogin() {
 				const homepage = GLOBAL_CONFIG.homepage ?? "/";
 				console.debug("HOME:", homepage, "CURRENT:", window.location.href);
 				/*   setTimeout(() => {
-             navigate(GLOBAL_CONFIG.homepage, { replace: true });
-           }, 0);*/
+						 navigate(GLOBAL_CONFIG.homepage, { replace: true });
+					 }, 0);*/
 
 				toast.success("Sign in success!", {
 					closeButton: true,
@@ -38,18 +46,24 @@ export default function OAuthAutoLogin() {
 				window.location.replace(GLOBAL_CONFIG.homepage);
 			} catch (err) {
 				const message = err instanceof Error ? err.message : "Sign in fail!";
-				toast.error(message, {
+				console.error("OAuth Login Error:", err);
+				console.log(message);
+				toast.error("Sign in fail!", {
 					closeButton: true,
 				});
-				setTimeout(() => {
-					window.history.replaceState({}, "", "/auth/login");
-					window.location.replace("/auth/login");
-				}, 2000);
+			} finally {
+				setLoading(false);
 			}
 		}
 
 		handle();
 	}, []);
 
-	return <div>{msg}</div>;
+	return (
+		<Spin spinning={loading}>
+			<div>
+				<LoginPage />
+			</div>
+		</Spin>
+	);
 }
